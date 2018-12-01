@@ -1,0 +1,370 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8B711A7B21B338D000782C76 /* MapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BCC788221B153F600106CA3 /* MapVC.swift */; };
+		8B711A7C21B338D000782C76 /* BLEStatusVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B70F6C621B2E4D500F094E8 /* BLEStatusVC.swift */; };
+		8B711A7D21B338D000782C76 /* BLEListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B70F6C821B2E81A00F094E8 /* BLEListVC.swift */; };
+		8B711A7E21B338D000782C76 /* BLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BCC788421B155FD00106CA3 /* BLEManager.swift */; };
+		8B711A7F21B338D000782C76 /* Definitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BCC788021B1536000106CA3 /* Definitions.swift */; };
+		8B711A8021B338D000782C76 /* ARVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D5CEE21AD792E00F65E5D /* ARVC.swift */; };
+		8B711A8121B338D000782C76 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D5CEA21AD792E00F65E5D /* AppDelegate.swift */; };
+		8B711A8421B338D000782C76 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA9D5CF521AD792F00F65E5D /* LaunchScreen.storyboard */; };
+		8B711A8521B338D000782C76 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = CA9D5CEC21AD792E00F65E5D /* art.scnassets */; };
+		8B711A8621B338D000782C76 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA9D5CF321AD792F00F65E5D /* Assets.xcassets */; };
+		8B711A8721B338D000782C76 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA9D5CF021AD792E00F65E5D /* Main.storyboard */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8B70F6C621B2E4D500F094E8 /* BLEStatusVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEStatusVC.swift; sourceTree = "<group>"; };
+		8B70F6C821B2E81A00F094E8 /* BLEListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEListVC.swift; sourceTree = "<group>"; };
+		8B711A8B21B338D000782C76 /* FindMyBike.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FindMyBike.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B711A8C21B338D100782C76 /* FIndMyBike-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "FIndMyBike-Info.plist"; path = "/Users/budi/Downloads/FindMyBike/FIndMyBike-Info.plist"; sourceTree = "<absolute>"; };
+		8BCC788021B1536000106CA3 /* Definitions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
+		8BCC788221B153F600106CA3 /* MapVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapVC.swift; sourceTree = "<group>"; };
+		8BCC788421B155FD00106CA3 /* BLEManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEManager.swift; sourceTree = "<group>"; };
+		CA9D5CEA21AD792E00F65E5D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		CA9D5CEC21AD792E00F65E5D /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = /Users/budi/Downloads/FindMyBike/FindMyBike/art.scnassets; sourceTree = "<absolute>"; };
+		CA9D5CEE21AD792E00F65E5D /* ARVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARVC.swift; sourceTree = "<group>"; };
+		CA9D5CF121AD792E00F65E5D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		CA9D5CF321AD792F00F65E5D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CA9D5CF621AD792F00F65E5D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		CA9D5CF821AD792F00F65E5D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8B711A8221B338D000782C76 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CA9D5CDE21AD792E00F65E5D = {
+			isa = PBXGroup;
+			children = (
+				CA9D5CE921AD792E00F65E5D /* FindMyBike */,
+				CA9D5CE821AD792E00F65E5D /* Products */,
+				8B711A8C21B338D100782C76 /* FIndMyBike-Info.plist */,
+			);
+			sourceTree = "<group>";
+		};
+		CA9D5CE821AD792E00F65E5D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8B711A8B21B338D000782C76 /* FindMyBike.app */,
+			);
+			name = Products;
+			path = /Users/budi/Downloads/FindMyBike;
+			sourceTree = "<absolute>";
+		};
+		CA9D5CE921AD792E00F65E5D /* FindMyBike */ = {
+			isa = PBXGroup;
+			children = (
+				CA9D5CEA21AD792E00F65E5D /* AppDelegate.swift */,
+				CA9D5CEC21AD792E00F65E5D /* art.scnassets */,
+				8BCC788221B153F600106CA3 /* MapVC.swift */,
+				CA9D5CEE21AD792E00F65E5D /* ARVC.swift */,
+				8B70F6C621B2E4D500F094E8 /* BLEStatusVC.swift */,
+				8B70F6C821B2E81A00F094E8 /* BLEListVC.swift */,
+				8BCC788421B155FD00106CA3 /* BLEManager.swift */,
+				8BCC788021B1536000106CA3 /* Definitions.swift */,
+				CA9D5CF021AD792E00F65E5D /* Main.storyboard */,
+				CA9D5CF321AD792F00F65E5D /* Assets.xcassets */,
+				CA9D5CF521AD792F00F65E5D /* LaunchScreen.storyboard */,
+				CA9D5CF821AD792F00F65E5D /* Info.plist */,
+			);
+			name = FindMyBike;
+			path = /Users/budi/Downloads/FindMyBike/FindMyBike;
+			sourceTree = "<absolute>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8B711A7921B338D000782C76 /* FindMyBike */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8B711A8821B338D000782C76 /* Build configuration list for PBXNativeTarget "FindMyBike" */;
+			buildPhases = (
+				8B711A7A21B338D000782C76 /* Sources */,
+				8B711A8221B338D000782C76 /* Frameworks */,
+				8B711A8321B338D000782C76 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FindMyBike;
+			productName = team5ui;
+			productReference = 8B711A8B21B338D000782C76 /* FindMyBike.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CA9D5CDF21AD792E00F65E5D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1010;
+				LastUpgradeCheck = 1010;
+				ORGANIZATIONNAME = V.Lab;
+			};
+			buildConfigurationList = CA9D5CE221AD792E00F65E5D /* Build configuration list for PBXProject "FindMyBike" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CA9D5CDE21AD792E00F65E5D;
+			productRefGroup = CA9D5CE821AD792E00F65E5D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8B711A7921B338D000782C76 /* FindMyBike */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8B711A8321B338D000782C76 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8B711A8421B338D000782C76 /* LaunchScreen.storyboard in Resources */,
+				8B711A8521B338D000782C76 /* art.scnassets in Resources */,
+				8B711A8621B338D000782C76 /* Assets.xcassets in Resources */,
+				8B711A8721B338D000782C76 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8B711A7A21B338D000782C76 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8B711A7B21B338D000782C76 /* MapVC.swift in Sources */,
+				8B711A7C21B338D000782C76 /* BLEStatusVC.swift in Sources */,
+				8B711A7D21B338D000782C76 /* BLEListVC.swift in Sources */,
+				8B711A7E21B338D000782C76 /* BLEManager.swift in Sources */,
+				8B711A7F21B338D000782C76 /* Definitions.swift in Sources */,
+				8B711A8021B338D000782C76 /* ARVC.swift in Sources */,
+				8B711A8121B338D000782C76 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		CA9D5CF021AD792E00F65E5D /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CA9D5CF121AD792E00F65E5D /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		CA9D5CF521AD792F00F65E5D /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CA9D5CF621AD792F00F65E5D /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		8B711A8921B338D000782C76 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = JFUZ68FAY6;
+				INFOPLIST_FILE = "FIndMyBike-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = FindMyBike;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		8B711A8A21B338D000782C76 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = JFUZ68FAY6;
+				INFOPLIST_FILE = "FIndMyBike-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = FindMyBike;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		CA9D5D0F21AD792F00F65E5D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CA9D5D1021AD792F00F65E5D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8B711A8821B338D000782C76 /* Build configuration list for PBXNativeTarget "FindMyBike" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8B711A8921B338D000782C76 /* Debug */,
+				8B711A8A21B338D000782C76 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CA9D5CE221AD792E00F65E5D /* Build configuration list for PBXProject "FindMyBike" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA9D5D0F21AD792F00F65E5D /* Debug */,
+				CA9D5D1021AD792F00F65E5D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CA9D5CDF21AD792E00F65E5D /* Project object */;
+}
