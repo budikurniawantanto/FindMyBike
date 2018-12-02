@@ -24,12 +24,12 @@
 		8B70F6C621B2E4D500F094E8 /* BLEStatusVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEStatusVC.swift; sourceTree = "<group>"; };
 		8B70F6C821B2E81A00F094E8 /* BLEListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEListVC.swift; sourceTree = "<group>"; };
 		8B711A8B21B338D000782C76 /* FindMyBike.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FindMyBike.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8B711A8C21B338D100782C76 /* FIndMyBike-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "FIndMyBike-Info.plist"; path = "/Users/budi/Downloads/FindMyBike/FIndMyBike-Info.plist"; sourceTree = "<absolute>"; };
+		8B711A8C21B338D100782C76 /* FIndMyBike-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FIndMyBike-Info.plist"; sourceTree = "<group>"; };
 		8BCC788021B1536000106CA3 /* Definitions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
 		8BCC788221B153F600106CA3 /* MapVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapVC.swift; sourceTree = "<group>"; };
 		8BCC788421B155FD00106CA3 /* BLEManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEManager.swift; sourceTree = "<group>"; };
 		CA9D5CEA21AD792E00F65E5D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		CA9D5CEC21AD792E00F65E5D /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; name = art.scnassets; path = /Users/budi/Downloads/FindMyBike/FindMyBike/art.scnassets; sourceTree = "<absolute>"; };
+		CA9D5CEC21AD792E00F65E5D /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		CA9D5CEE21AD792E00F65E5D /* ARVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARVC.swift; sourceTree = "<group>"; };
 		CA9D5CF121AD792E00F65E5D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CA9D5CF321AD792F00F65E5D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -63,8 +63,7 @@
 				8B711A8B21B338D000782C76 /* FindMyBike.app */,
 			);
 			name = Products;
-			path = /Users/budi/Downloads/FindMyBike;
-			sourceTree = "<absolute>";
+			sourceTree = "<group>";
 		};
 		CA9D5CE921AD792E00F65E5D /* FindMyBike */ = {
 			isa = PBXGroup;
@@ -82,9 +81,8 @@
 				CA9D5CF521AD792F00F65E5D /* LaunchScreen.storyboard */,
 				CA9D5CF821AD792F00F65E5D /* Info.plist */,
 			);
-			name = FindMyBike;
-			path = /Users/budi/Downloads/FindMyBike/FindMyBike;
-			sourceTree = "<absolute>";
+			path = FindMyBike;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
