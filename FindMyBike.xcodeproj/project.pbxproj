@@ -7,6 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8B0C674821B6DCBD00DB3806 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = CA9D5CEC21AD792E00F65E5D /* art.scnassets */; };
+		8B2854C521B5231E005CE723 /* ApplicationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854AD21B5231E005CE723 /* ApplicationService.swift */; };
+		8B2854C621B5231E005CE723 /* LocationServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854AE21B5231E005CE723 /* LocationServiceDelegate.swift */; };
+		8B2854C721B5231E005CE723 /* MatrixHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854B021B5231E005CE723 /* MatrixHelper.swift */; };
+		8B2854C821B5231E005CE723 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854B121B5231E005CE723 /* LocationService.swift */; };
+		8B2854C921B5231E005CE723 /* NavigationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854B221B5231E005CE723 /* NavigationService.swift */; };
+		8B2854CA21B5231E005CE723 /* BaseNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854B421B5231E005CE723 /* BaseNode.swift */; };
+		8B2854CB21B5231E005CE723 /* POIAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854B521B5231E005CE723 /* POIAnnotation.swift */; };
+		8B2854CC21B5231E005CE723 /* LocationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854B621B5231E005CE723 /* LocationData.swift */; };
+		8B2854CD21B5231E005CE723 /* LocationTranslation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854B721B5231E005CE723 /* LocationTranslation.swift */; };
+		8B2854D921B528C2005CE723 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854A321B522B0005CE723 /* Constants.swift */; };
+		8B2854DA21B528C2005CE723 /* CLLocationCoordinate2D+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854A421B522B0005CE723 /* CLLocationCoordinate2D+Extension.swift */; };
+		8B2854DB21B528C2005CE723 /* CLLocation+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854A521B522B0005CE723 /* CLLocation+Extension.swift */; };
+		8B2854DC21B528C2005CE723 /* StoryboardIdentifiableError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854A621B522B0005CE723 /* StoryboardIdentifiableError.swift */; };
+		8B2854DD21B528C2005CE723 /* SCNVector3+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854A721B522B0005CE723 /* SCNVector3+Extension.swift */; };
+		8B2854DE21B528C2005CE723 /* Double+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854A821B522B0005CE723 /* Double+Extension.swift */; };
+		8B2854E021B528C2005CE723 /* MKRouteStep+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2854AA21B522B0005CE723 /* MKRouteStep+Extension.swift */; };
+		8B4A966521B632F7005B81A3 /* FIndMyBike-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B711A8C21B338D100782C76 /* FIndMyBike-Info.plist */; };
 		8B711A7B21B338D000782C76 /* MapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BCC788221B153F600106CA3 /* MapVC.swift */; };
 		8B711A7C21B338D000782C76 /* BLEStatusVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B70F6C621B2E4D500F094E8 /* BLEStatusVC.swift */; };
 		8B711A7D21B338D000782C76 /* BLEListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B70F6C821B2E81A00F094E8 /* BLEListVC.swift */; };
@@ -15,12 +33,27 @@
 		8B711A8021B338D000782C76 /* ARVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D5CEE21AD792E00F65E5D /* ARVC.swift */; };
 		8B711A8121B338D000782C76 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D5CEA21AD792E00F65E5D /* AppDelegate.swift */; };
 		8B711A8421B338D000782C76 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA9D5CF521AD792F00F65E5D /* LaunchScreen.storyboard */; };
-		8B711A8521B338D000782C76 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = CA9D5CEC21AD792E00F65E5D /* art.scnassets */; };
 		8B711A8621B338D000782C76 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA9D5CF321AD792F00F65E5D /* Assets.xcassets */; };
 		8B711A8721B338D000782C76 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA9D5CF021AD792E00F65E5D /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8B2854A321B522B0005CE723 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		8B2854A421B522B0005CE723 /* CLLocationCoordinate2D+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+Extension.swift"; sourceTree = "<group>"; };
+		8B2854A521B522B0005CE723 /* CLLocation+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocation+Extension.swift"; sourceTree = "<group>"; };
+		8B2854A621B522B0005CE723 /* StoryboardIdentifiableError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryboardIdentifiableError.swift; sourceTree = "<group>"; };
+		8B2854A721B522B0005CE723 /* SCNVector3+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SCNVector3+Extension.swift"; sourceTree = "<group>"; };
+		8B2854A821B522B0005CE723 /* Double+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extension.swift"; sourceTree = "<group>"; };
+		8B2854AA21B522B0005CE723 /* MKRouteStep+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKRouteStep+Extension.swift"; sourceTree = "<group>"; };
+		8B2854AD21B5231E005CE723 /* ApplicationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationService.swift; sourceTree = "<group>"; };
+		8B2854AE21B5231E005CE723 /* LocationServiceDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationServiceDelegate.swift; sourceTree = "<group>"; };
+		8B2854B021B5231E005CE723 /* MatrixHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MatrixHelper.swift; sourceTree = "<group>"; };
+		8B2854B121B5231E005CE723 /* LocationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		8B2854B221B5231E005CE723 /* NavigationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationService.swift; sourceTree = "<group>"; };
+		8B2854B421B5231E005CE723 /* BaseNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseNode.swift; sourceTree = "<group>"; };
+		8B2854B521B5231E005CE723 /* POIAnnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = POIAnnotation.swift; sourceTree = "<group>"; };
+		8B2854B621B5231E005CE723 /* LocationData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationData.swift; sourceTree = "<group>"; };
+		8B2854B721B5231E005CE723 /* LocationTranslation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationTranslation.swift; sourceTree = "<group>"; };
 		8B70F6C621B2E4D500F094E8 /* BLEStatusVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEStatusVC.swift; sourceTree = "<group>"; };
 		8B70F6C821B2E81A00F094E8 /* BLEListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEListVC.swift; sourceTree = "<group>"; };
 		8B711A8B21B338D000782C76 /* FindMyBike.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FindMyBike.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -48,6 +81,52 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8B2854AB21B522B0005CE723 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				8B2854A321B522B0005CE723 /* Constants.swift */,
+				8B2854A421B522B0005CE723 /* CLLocationCoordinate2D+Extension.swift */,
+				8B2854A521B522B0005CE723 /* CLLocation+Extension.swift */,
+				8B2854A621B522B0005CE723 /* StoryboardIdentifiableError.swift */,
+				8B2854A721B522B0005CE723 /* SCNVector3+Extension.swift */,
+				8B2854A821B522B0005CE723 /* Double+Extension.swift */,
+				8B2854AA21B522B0005CE723 /* MKRouteStep+Extension.swift */,
+			);
+			name = Extensions;
+			path = ../FindMyBike.xcodeproj/Extensions;
+			sourceTree = "<group>";
+		};
+		8B2854AC21B5231E005CE723 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				8B2854AD21B5231E005CE723 /* ApplicationService.swift */,
+				8B2854AE21B5231E005CE723 /* LocationServiceDelegate.swift */,
+				8B2854AF21B5231E005CE723 /* Helpers */,
+				8B2854B121B5231E005CE723 /* LocationService.swift */,
+				8B2854B221B5231E005CE723 /* NavigationService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		8B2854AF21B5231E005CE723 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				8B2854B021B5231E005CE723 /* MatrixHelper.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		8B2854B321B5231E005CE723 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8B2854B421B5231E005CE723 /* BaseNode.swift */,
+				8B2854B521B5231E005CE723 /* POIAnnotation.swift */,
+				8B2854B621B5231E005CE723 /* LocationData.swift */,
+				8B2854B721B5231E005CE723 /* LocationTranslation.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		CA9D5CDE21AD792E00F65E5D = {
 			isa = PBXGroup;
 			children = (
@@ -68,8 +147,11 @@
 		CA9D5CE921AD792E00F65E5D /* FindMyBike */ = {
 			isa = PBXGroup;
 			children = (
-				CA9D5CEA21AD792E00F65E5D /* AppDelegate.swift */,
+				8B2854AB21B522B0005CE723 /* Extensions */,
 				CA9D5CEC21AD792E00F65E5D /* art.scnassets */,
+				8B2854B321B5231E005CE723 /* Models */,
+				8B2854AC21B5231E005CE723 /* Services */,
+				CA9D5CEA21AD792E00F65E5D /* AppDelegate.swift */,
 				8BCC788221B153F600106CA3 /* MapVC.swift */,
 				CA9D5CEE21AD792E00F65E5D /* ARVC.swift */,
 				8B70F6C621B2E4D500F094E8 /* BLEStatusVC.swift */,
@@ -137,8 +219,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B0C674821B6DCBD00DB3806 /* art.scnassets in Resources */,
 				8B711A8421B338D000782C76 /* LaunchScreen.storyboard in Resources */,
-				8B711A8521B338D000782C76 /* art.scnassets in Resources */,
+				8B4A966521B632F7005B81A3 /* FIndMyBike-Info.plist in Resources */,
 				8B711A8621B338D000782C76 /* Assets.xcassets in Resources */,
 				8B711A8721B338D000782C76 /* Main.storyboard in Resources */,
 			);
@@ -151,13 +234,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B2854CB21B5231E005CE723 /* POIAnnotation.swift in Sources */,
 				8B711A7B21B338D000782C76 /* MapVC.swift in Sources */,
 				8B711A7C21B338D000782C76 /* BLEStatusVC.swift in Sources */,
+				8B2854C621B5231E005CE723 /* LocationServiceDelegate.swift in Sources */,
+				8B2854DE21B528C2005CE723 /* Double+Extension.swift in Sources */,
+				8B2854E021B528C2005CE723 /* MKRouteStep+Extension.swift in Sources */,
+				8B2854DD21B528C2005CE723 /* SCNVector3+Extension.swift in Sources */,
 				8B711A7D21B338D000782C76 /* BLEListVC.swift in Sources */,
+				8B2854CA21B5231E005CE723 /* BaseNode.swift in Sources */,
+				8B2854D921B528C2005CE723 /* Constants.swift in Sources */,
+				8B2854CD21B5231E005CE723 /* LocationTranslation.swift in Sources */,
+				8B2854C721B5231E005CE723 /* MatrixHelper.swift in Sources */,
+				8B2854DC21B528C2005CE723 /* StoryboardIdentifiableError.swift in Sources */,
+				8B2854CC21B5231E005CE723 /* LocationData.swift in Sources */,
+				8B2854DA21B528C2005CE723 /* CLLocationCoordinate2D+Extension.swift in Sources */,
+				8B2854DB21B528C2005CE723 /* CLLocation+Extension.swift in Sources */,
 				8B711A7E21B338D000782C76 /* BLEManager.swift in Sources */,
+				8B2854C521B5231E005CE723 /* ApplicationService.swift in Sources */,
+				8B2854C821B5231E005CE723 /* LocationService.swift in Sources */,
 				8B711A7F21B338D000782C76 /* Definitions.swift in Sources */,
 				8B711A8021B338D000782C76 /* ARVC.swift in Sources */,
 				8B711A8121B338D000782C76 /* AppDelegate.swift in Sources */,
+				8B2854C921B5231E005CE723 /* NavigationService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

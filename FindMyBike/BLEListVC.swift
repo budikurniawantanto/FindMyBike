@@ -32,49 +32,38 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         bleList.delegate = self
         bleList.dataSource = self
         selectedCell = nil
-        
-        BLEManager.shared().scan()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(loadList), name: NSNotification.Name(rawValue: "load"), object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(ConnectionSuccess), name: NSNotification.Name(rawValue: "success"), object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(ConnectionFailed), name: NSNotification.Name(rawValue: "failed"), object: nil)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        //NSLog("---BLEListVC--- viewWillAppear")
+        super.viewWillAppear(animated)
     }
     
     /** callback function when MapVC is re-appear */
     override func viewDidAppear(_ animated: Bool) {
+        NSLog("---BLEListVC--- viewDidAppear")
         super.viewDidAppear(animated)
-        BLEManager.shared().scan()
-    }
-    
-    /** callback function when BLEManager success get new bluetooth devices */
-    @objc func loadList(){
-        print("---BLEListVC--- reload BLE list")
+        
+        addNotificationObserver()
+        
+        //load data to list
         BLEList = BLEManager.shared().peripheralList
         bleList.reloadData()
+        
+        //start scan
+        BLEManager.shared().startScan()
     }
     
-    /** callback function when BLEManager success connect to selected devices */
-    @objc func ConnectionSuccess(){
-        print("---BLEListVC--- connection success")
-        let alertVC = UIAlertController(title: "Connection Result", message: "Connected!!!", preferredStyle: UIAlertController.Style.alert)
-        let action = UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction) -> Void in
-            self.dismiss(animated: true, completion: nil)
-        })
-        alertVC.addAction(action)
-        self.present(alertVC, animated: true, completion: nil)
+    override func viewWillDisappear(_ animated: Bool) {
+        //NSLog("---BLEListVC--- viewWillDisappear")
+        super.viewWillDisappear(animated)
+        BLEManager.shared().stopScan()
+        NotificationCenter.default.removeObserver(self)
     }
     
-    /** callback function when BLEManager failed connect to selected devices */
-    @objc func ConnectionFailed(){
-        print("---BLEListVC--- reload BLE list")
-        let alertVC = UIAlertController(title: "Connection Result", message: "Failed!!! Please try again or select another device", preferredStyle: UIAlertController.Style.alert)
-        let action = UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction) -> Void in
-            self.dismiss(animated: true, completion: nil)
-        })
-        alertVC.addAction(action)
-        self.present(alertVC, animated: true, completion: nil)
+    override func viewDidDisappear(_ animated: Bool) {
+        //NSLog("---BLEListVC--- viewDidDisappear")
+        super.viewDidDisappear(animated)
     }
     
     /** connect to selected peripheral when user press Connect button*/
@@ -82,16 +71,22 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         if selectedCell != nil {
             for peripheral in BLEList {
                 if (BLEManager.shared().isConnected == true && BLEManager.shared().discoveredPeripheral != peripheral) || peripheral.name == selectedCell?.textLabel!.text {
-                    print("---BLEListVC--- found selected peripheral = \(peripheral)")
+                    NSLog("---BLEListVC--- found selected peripheral = \(peripheral)")
                     BLEManager.shared().connect(peripheral: peripheral)
                 }
             }
         }
         else{
-            let alertVC = UIAlertController(title: "No Bluetooth Device Selected", message: "Please select bluetooth device that you want to connect!!!", preferredStyle: UIAlertController.Style.alert)
-            let action = UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction) -> Void in
-                self.dismiss(animated: true, completion: nil)
-            })
+            let alertVC = UIAlertController(
+                title: "No Bluetooth Device Selected",
+                message: "Please select bluetooth device that you want to connect!!!",
+                preferredStyle: UIAlertController.Style.alert)
+            let action = UIAlertAction(
+                title: "OK",
+                style: UIAlertAction.Style.default,
+                handler: { (action: UIAlertAction) -> Void in
+                    self.dismiss(animated: true, completion: nil)
+                })
             alertVC.addAction(action)
             self.present(alertVC, animated: true, completion: nil)
         }
@@ -99,7 +94,7 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     /** Get total available BLE device list */
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("---BLEListVC--- total list = \(BLEList.count)")
+        NSLog("---BLEListVC--- total list = \(BLEList.count)")
         return BLEList.count
     }
     
@@ -107,7 +102,7 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:UITableViewCell = bleList.dequeueReusableCell(withIdentifier: "cell")! as UITableViewCell
         let peripheral = BLEList[indexPath.row]
-        print("---BLEListVC--- peripheral = \(peripheral)")
+        NSLog("---BLEListVC--- peripheral = \(peripheral)")
         cell.textLabel?.text = peripheral.name
         
         return cell
@@ -115,7 +110,107 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     /** called when user click on specific row on tableView */
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedCell = bleList.cellForRow(at: indexPath) as! UITableViewCell
-        print("---BLEListVC--- selected cell = \(String(describing: selectedCell!.textLabel!.text))")
+        selectedCell = (bleList.cellForRow(at: indexPath) as! UITableViewCell)
+        NSLog("---BLEListVC--- selected cell = \(String(describing: selectedCell!.textLabel!.text))")
+    }
+    
+    /** add notification observer */
+    func addNotificationObserver(){
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(loadBLEList),
+            name: NSNotification.Name(rawValue: "LoadBLEList"),
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(ConnectionSuccess),
+            name: NSNotification.Name(rawValue: "BLEConnectSuccess"),
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(ConnectionFailed),
+            name: NSNotification.Name(rawValue: "BLEFailToConnect"),
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(BLEDisconnected),
+            name: NSNotification.Name(rawValue: "BLEDisconnected"),
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(AppGoToForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(AppGoToBackground),
+            name: UIApplication.willResignActiveNotification,
+            object: nil)
+    }
+    
+    /** callback function when BLEManager success get new bluetooth devices */
+    @objc func loadBLEList(){
+        NSLog("---BLEListVC--- reload BLE list")
+        BLEList = BLEManager.shared().peripheralList
+        bleList.reloadData()
+    }
+    
+    /** callback function when BLEManager success connect to selected devices */
+    @objc func ConnectionSuccess(){
+        NSLog("---BLEListVC--- connection success")
+        let alertVC = UIAlertController(
+            title: "Connection Result",
+            message: "Connected!!!",
+            preferredStyle: UIAlertController.Style.alert)
+        let action = UIAlertAction(
+            title: "OK",
+            style: UIAlertAction.Style.default,
+            handler: { (action: UIAlertAction) -> Void in
+                self.dismiss(animated: true, completion: nil)
+        })
+        alertVC.addAction(action)
+        self.present(alertVC, animated: true, completion: nil)
+    }
+    
+    /** callback function when BLEManager failed connect to selected devices */
+    @objc func ConnectionFailed(){
+        NSLog("---BLEListVC--- BLE connection failed")
+        let alertVC = UIAlertController(
+            title: "Connection Result",
+            message: "Failed!!! Please try again or select another device",
+            preferredStyle: UIAlertController.Style.alert)
+        let action = UIAlertAction(
+            title: "OK",
+            style: UIAlertAction.Style.default,
+            handler: { (action: UIAlertAction) -> Void in
+                self.dismiss(animated: true, completion: nil)
+        })
+        alertVC.addAction(action)
+        self.present(alertVC, animated: true, completion: nil)
+    }
+    
+    @objc func BLEDisconnected(){
+        NSLog("---BLEStatusVC--- BLE disconnect")
+        //load data to list
+        BLEList = BLEManager.shared().peripheralList
+        bleList.reloadData()
+    }
+    
+    @objc func AppGoToForeground(){
+        NSLog("---MapVC--- App go to foreground")
+        addNotificationObserver()
+        
+        //load data to list
+        BLEList = BLEManager.shared().peripheralList
+        bleList.reloadData()
+        
+        //start scan
+        BLEManager.shared().startScan()
+    }
+    
+    @objc func AppGoToBackground(){
+        NSLog("---MapVC--- App go to background")
+        BLEManager.shared().stopScan()
+        NotificationCenter.default.removeObserver(self)
     }
 }

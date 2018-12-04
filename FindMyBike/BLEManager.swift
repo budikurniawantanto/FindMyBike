@@ -27,6 +27,8 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     var ledIndex:Int! = 0
     var valueOn:UInt8 = 1
     var valueOff:UInt8 = 0
+    var transferServiceUUID:CBUUID = MACtransferServiceUUID
+    var transferCharacteristicUUID:CBUUID = MACtransferCharacteristicUUID
 
     private static var mInstance:BLEManager?
     static func shared() -> BLEManager {
@@ -43,31 +45,31 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     }
     
     /** Scan for peripherals - specifically for our service's 128bit CBUUID*/
-    func scan() {
-        print("---BLEManager--- Enter scan function")
+    func startScan() {
+        NSLog("---BLEManager--- Start scan")
         centralManager?.scanForPeripherals(
-            withServices: [MACtransferServiceUUID], options: nil
+            withServices: [transferServiceUUID], options: nil
         )
         
-        print("---BLEManager--- Scanning started")
+        NSLog("---BLEManager--- Scanning....")
     }
     
     /** Stop Scan*/
     func stopScan() {
-        print("---BLEManager--- Stopping scan")
+        NSLog("---BLEManager--- Stopping scan")
         centralManager?.stopScan()
     }
    
     /**Connect to selected peripheral*/
     func connect(peripheral: CBPeripheral){
-        print("---BLEManager--- Connecting to peripheral \(peripheral)")
+        NSLog("---BLEManager--- Connecting to peripheral \(peripheral)")
         centralManager?.connect(peripheral, options: nil)
     }
     
     /** Collect existing peripheral that connected now*/
     func retrieveExistingPeripheral(){
-        existingPeripheralList = (centralManager?.retrieveConnectedPeripherals(withServices: [MACtransferServiceUUID]) ?? nil)!
-        print("---BLEManager--- Existing peripheral list = \(existingPeripheralList)")
+        existingPeripheralList = (centralManager?.retrieveConnectedPeripherals(withServices: [transferServiceUUID]) ?? nil)!
+        NSLog("---BLEManager--- Existing peripheral list = \(existingPeripheralList)")
         if existingPeripheralList.count != 0 {
             connect(peripheral: existingPeripheralList[0])
         }
@@ -75,19 +77,19 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     
     /** Send command to peripheral device in order to change led light*/
     func ChangeLED(){
-        print("---BLEManager--- Start send command to arduino with TransferServiceUUID=\(discoveredPeripheral!.identifier.uuidString), TransferCharacteristicUUID=\(String(describing: discoveredCharacteristic?.uuid))")
+        NSLog("---BLEManager--- Start send command to arduino with TransferServiceUUID=\(discoveredPeripheral!.identifier.uuidString), TransferCharacteristicUUID=\(String(describing: discoveredCharacteristic?.uuid))")
         
         //send command to arduino
         if ledIndex == 0 {
             let data = Data(bytes: [valueOn])
             ledIndex = 1
-            print("---BLEManager--- data = \(data)")
+            NSLog("---BLEManager--- data = \(data)")
             discoveredPeripheral!.writeValue(data, for: discoveredCharacteristic!, type: .withResponse)
         }
         else{
             let data = Data(bytes: [valueOff])
             ledIndex = 0
-            print("---BLEManager--- data = \(data)")
+            NSLog("---BLEManager--- data = \(data)")
             discoveredPeripheral!.writeValue(data, for: discoveredCharacteristic!, type: .withResponse)
         }
     }
@@ -98,19 +100,19 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
      *  the Central is ready to be used.
      */
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        print("\(#line) \(#function)")
+        NSLog("\(#line) \(#function)")
         
         if central.state == .poweredOn {
             // We will just handle it the easy way here: if Bluetooth is on, proceed...start scan!
-            print("---BLEManager--- Bluetooth Already Enabled")
+            NSLog("---BLEManager--- Bluetooth Already Enabled")
             
             // The state must be CBCentralManagerStatePoweredOn...
             // ... so start scanning
-            scan()
+            startScan()
             retrieveExistingPeripheral()
         } else {
             //If Bluetooth is off, display a UI alert message saying "Bluetooth is not enable" and "Make sure that your bluetooth is turned on"
-            print("---BLEManager--- Bluetooth Disabled- Make sure your Bluetooth is turned on")
+            NSLog("---BLEManager--- Bluetooth Disabled- Make sure your Bluetooth is turned on")
             
             let alertVC = UIAlertController(title: "Bluetooth is not enabled", message: "Make sure that your bluetooth is turned on", preferredStyle: UIAlertController.Style.alert)
             let action = UIAlertAction(title: "ok", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction) -> Void in
@@ -131,45 +133,36 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         // Reject if the signal strength is too low to be close enough (Close is around -22dB)
         
         //        if  RSSI.integerValue < -15 && RSSI.integerValue > -35 {
-        //            println("Device not at correct range")
+        //            NSLog("Device not at correct range")
         //            return
         //        }
         
-        print("---BLEManager--- Discovered Peripheral Device: Name = \(String(describing: peripheral.name)), UUID = \(peripheral.identifier.uuidString), RSSI = \(RSSI)")
+        NSLog("---BLEManager--- Discovered Peripheral Device: Name = \(String(describing: peripheral.name)), UUID = \(peripheral.identifier.uuidString), RSSI = \(RSSI)")
         
-        // Ok, it's in range - have we already seen it?
-        /*if discoveredPeripheral != peripheral {
-            // Save a local copy of the peripheral, so CoreBluetooth doesn't get rid of it
-            discoveredPeripheral = peripheral
-            
-            // And connect
-            connect(peripheral: peripheral)
-        }*/
         if peripheralList.contains(peripheral) == false {
             peripheralList.append(peripheral)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "LoadBLEList"), object: nil)
         }
         else{
-            print("---BLEManager--- peripheral exist: \(peripheral)")
+            NSLog("---BLEManager--- peripheral exist: \(peripheral)")
         }
-        
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "load"), object: nil)
     }
     
     /** If the connection fails for whatever reason, we need to deal with it. */
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?)
     {
-        print("---BLEManager---  Failed to connect to \(peripheral). (\(error!.localizedDescription))")
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "failed"), object: nil)
+        NSLog("---BLEManager---  Failed to connect to \(peripheral). (\(error!.localizedDescription))")
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "BLEFailToConnect"), object: nil)
         cleanup()
     }
     
     /** We've connected to the peripheral, now we need to discover the services and characteristics to find the 'transfer' characteristic. */
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        print("---BLEManager--- Peripheral Connected")
+        NSLog("---BLEManager--- Peripheral Connected")
         
         // Stop scanning
         centralManager?.stopScan()
-        print("---BLEManager--- Scanning stopped")
+        NSLog("---BLEManager--- Scanning stopped")
         
         // Clear the data that we may already have
         data.length = 0
@@ -180,14 +173,14 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         peripheral.delegate = self
         
         // Search only for services that match our UUID
-        peripheral.discoverServices([MACtransferServiceUUID])
+        peripheral.discoverServices([transferServiceUUID])
     }
     
     /** The Transfer Service was discovered */
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        print("---BLEManager---  Success discover Transfer Services")
+        NSLog("---BLEManager---  Success discover Transfer Services")
         guard error == nil else {
-            print("---BLEManager--- Error discovering services: \(error!.localizedDescription)")
+            NSLog("---BLEManager--- Error discovering services: \(error!.localizedDescription)")
             cleanup()
             return
         }
@@ -196,23 +189,29 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
             return
         }
         
-        print("---BLEManager--- Services: \(services)")
+        NSLog("---BLEManager--- Services: \(services)")
         // Discover the characteristic we want...
         
         // Loop through the newly filled peripheral.services array, just in case there's more than one.
-        for service in services {
-            peripheral.discoverCharacteristics([MACtransferCharacteristicUUID], for: service)
+        if services.isEmpty {
+            NSLog("---BLEManager--- Services is empty, cancel peripheral connection")
+            cancelPeripheralConnection()
+        }
+        else {
+            for service in services {
+                peripheral.discoverCharacteristics([transferCharacteristicUUID], for: service)
+            }
         }
     }
     
     /** The Transfer characteristic was discovered.
      *  Once this has been found, we want to subscribe to it, which lets the peripheral know we want the data it contains */
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        print("---BLEManager--- Success discover Transfer Characteristic")
+        NSLog("---BLEManager--- Success discover Transfer Characteristic")
         
         // Deal with errors (if any)
         guard error == nil else {
-            print("---BLEManager--- Error discovering services: \(error!.localizedDescription)")
+            NSLog("---BLEManager--- Error discovering services: \(error!.localizedDescription)")
             cleanup()
             return
         }
@@ -224,11 +223,14 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         // Again, we loop through the array, just in case.
         for characteristic in characteristics {
             // And check if it's the right one
-            print("---BLEManager--- characteristic UUID = \(characteristic.uuid), properties = \(characteristic.properties)")
-            if (characteristic.properties.contains(.write) || characteristic.properties.contains(.writeWithoutResponse)) && characteristic.uuid.isEqual(MACtransferCharacteristicUUID) {
+            NSLog("---BLEManager--- characteristic UUID = \(characteristic.uuid), properties = \(characteristic.properties)")
+            if (characteristic.uuid.isEqual(transferCharacteristicUUID)) {
                 // If it is, subscribe to it
-                print("---BLEManager--- Characteristic is match, characteristic UUID = \(characteristic.uuid)")
+                NSLog("---BLEManager--- Characteristic is match, characteristic UUID = \(characteristic.uuid)")
                 peripheral.setNotifyValue(true, for: characteristic)
+            }
+            else{
+                cancelPeripheralConnection()
             }
         }
         // Once this is complete, we just need to wait for the data to come in.
@@ -237,53 +239,62 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     /** This callback lets us know more data has arrived via notification on the characteristic */
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         guard error == nil else {
-            print("---BLEManager--- Error discovering services: \(error!.localizedDescription)")
+            NSLog("---BLEManager--- Error discovering services: \(error!.localizedDescription)")
             return
         }
         
-        print("---BLEManager--- inside didUpdateValueFor, characteristic UUID = \(characteristic.uuid)")
+        NSLog("---BLEManager--- inside didUpdateValueFor, characteristic UUID = \(characteristic.uuid)")
     }
     
     /** The peripheral letting us know whether our subscribe/unsubscribe happened or not */
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-        print("---BLEManager--- Error changing notification state: \(String(describing: error?.localizedDescription))")
+        NSLog("---BLEManager--- Error changing notification state: \(String(describing: error?.localizedDescription))")
         
         // Exit if it's not the transfer characteristic
-        guard characteristic.uuid.isEqual(MACtransferCharacteristicUUID) else {
+        guard characteristic.uuid.isEqual(transferCharacteristicUUID) else {
             return
         }
         
         // Notification has started
         if (characteristic.isNotifying) {
-            print("---BLEManager--- Notification began on \(characteristic)")
+            NSLog("---BLEManager--- Notification began on \(characteristic)")
             discoveredCharacteristic = characteristic
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "success"), object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "BLEConnectSuccess"), object: nil)
         } else { // Notification has stopped
-            print("---BLEManager--- Notification stopped on (\(characteristic))  Disconnecting")
+            NSLog("---BLEManager--- Notification stopped on (\(characteristic))  Disconnecting")
             centralManager?.cancelPeripheralConnection(peripheral)
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "failed"), object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "BLEFailToConnect"), object: nil)
         }
     }
     
     /** read RSSI device to determine the range of user and device*/
     func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
         guard error == nil else {
-            print("---BLEManager--- Error discovering RSSI number: \(error!.localizedDescription)")
+            NSLog("---BLEManager--- Error discovering RSSI number: \(error!.localizedDescription)")
             return
         }
         
         discoveredRSSI = RSSI
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "rssi"), object: nil)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "GetRSSI"), object: nil)
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
+        NSLog("---BLEManager--- service = \(invalidatedServices)")
+        cancelPeripheralConnection()
     }
     
     /** Once the disconnection happens, we need to clean up our local copy of the peripheral*/
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        print("---BLEManager--- Peripheral Disconnected")
+        NSLog("---BLEManager--- Peripheral is Disconnected")
         discoveredPeripheral = nil
         isConnected = false
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "BLEDisconnected"), object: nil)
+        
+        peripheralList.remove(at: peripheralList.firstIndex(of: peripheral)!)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "LoadBLEList"), object: nil)
         
         // We're disconnected, so start scanning again
-        scan()
+        startScan()
     }
     
     /** Call this when things either go wrong, or you're done with the connection.
@@ -309,17 +320,26 @@ class BLEManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
             }
             
             for characteristic in characteristics {
-                if characteristic.uuid.isEqual(MACtransferCharacteristicUUID) && characteristic.isNotifying {
+                if characteristic.uuid.isEqual(transferCharacteristicUUID) && characteristic.isNotifying {
                     discoveredPeripheral?.setNotifyValue(false, for: characteristic)
                     // And we're done.
                     return
                 }
             }
         }
+        
+        isConnected = false
     }
     
     fileprivate func cancelPeripheralConnection() {
         // If we've got this far, we're connected, but we're not subscribed, so we just disconnect
+        NSLog("---BLEManager--- Cancel peripheral connection")
         centralManager?.cancelPeripheralConnection(discoveredPeripheral!)
     }
+    
+    /*func checkBluetoothConnection(){
+        if isConnected == true && discoveredPeripheral?.state == CBPeripheralState.disconnected {
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "BLEDisconnected"), object: nil)
+        }
+    }*/
 }

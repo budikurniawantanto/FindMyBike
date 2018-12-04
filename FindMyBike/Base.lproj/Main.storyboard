@@ -13,7 +13,7 @@
         <!--Home page-->
         <scene sceneID="PvU-vD-UCY">
             <objects>
-                <viewController title="Home page" id="bGM-9M-eeq" customClass="MapVC" customModule="team5ui" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Home page" id="bGM-9M-eeq" customClass="MapVC" customModule="FindMyBike" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rwi-I6-aX2">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -89,6 +89,7 @@
                     <connections>
                         <outlet property="arBtn" destination="wAK-qI-cip" id="Tu6-18-fXT"/>
                         <outlet property="ledBtn" destination="ZMo-Vy-wCH" id="fpN-t1-aD1"/>
+                        <outlet property="myMapView" destination="cac-ld-ObQ" id="Dgo-0m-mzP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KcX-tp-snW" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -98,7 +99,7 @@
         <!--StatusVC-->
         <scene sceneID="eSi-1R-OAh">
             <objects>
-                <viewController id="ClQ-aC-3tq" customClass="BLEStatusVC" customModule="team5ui" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="ClQ-aC-3tq" customClass="BLEStatusVC" customModule="FindMyBike" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="D9n-Z4-QCz">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -155,7 +156,7 @@
         <!--ListVC-->
         <scene sceneID="vAP-Io-AFW">
             <objects>
-                <viewController id="crW-Ye-lsg" customClass="BLEListVC" customModule="team5ui" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="crW-Ye-lsg" customClass="BLEListVC" customModule="FindMyBike" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Rzh-Bv-hgH">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -247,7 +248,7 @@
         <!--ARVC-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="ARVC" customModule="team5ui" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BV1-FR-VrT" customClass="ARVC" customModule="FindMyBike" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="U0K-SW-4ec">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -255,6 +256,13 @@
                             <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BrB-h1-WRS">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
                             </arscnView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" text="distance" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="rF7-Zf-MLu">
+                                <rect key="frame" x="0.0" y="88" width="375" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -267,11 +275,12 @@
                     </view>
                     <connections>
                         <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
+                        <outlet property="statusTextView" destination="rF7-Zf-MLu" id="m6g-R0-Lft"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-711" y="26"/>
+            <point key="canvasLocation" x="-711.20000000000005" y="25.862068965517242"/>
         </scene>
     </scenes>
     <resources>
