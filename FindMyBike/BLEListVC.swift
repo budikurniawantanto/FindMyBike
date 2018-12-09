@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreBluetooth
+import Bean_iOS_OSX_SDK
 
 class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
@@ -16,7 +17,7 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet weak var bleList: UITableView!
     
     var vc: UIViewController?
-    var BLEList: Array<CBPeripheral> = []
+    var BLEList: Array<PTDBean> = []
     var selectedCell: UITableViewCell?
     
     /** called when first time create BLEListVC layout
@@ -47,7 +48,7 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         addNotificationObserver()
         
         //load data to list
-        BLEList = BLEManager.shared().peripheralList
+        BLEList = BLEManager.shared().beanList
         bleList.reloadData()
         
         //start scan
@@ -69,10 +70,10 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     /** connect to selected peripheral when user press Connect button*/
     @IBAction func press_connectBtn(_ sender: Any) {
         if selectedCell != nil {
-            for peripheral in BLEList {
-                if (BLEManager.shared().isConnected == true && BLEManager.shared().discoveredPeripheral != peripheral) || peripheral.name == selectedCell?.textLabel!.text {
-                    NSLog("---BLEListVC--- found selected peripheral = \(peripheral)")
-                    BLEManager.shared().connect(peripheral: peripheral)
+            for bean in BLEList {
+                if (BLEManager.shared().isConnected == true && BLEManager.shared().myBean != bean) || bean.name == selectedCell?.textLabel!.text {
+                    NSLog("---BLEListVC--- found selected bean = \(bean)")
+                    BLEManager.shared().connectToBean(bean: bean)
                 }
             }
         }
@@ -101,9 +102,14 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     /** update BLE device list on tableView */
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:UITableViewCell = bleList.dequeueReusableCell(withIdentifier: "cell")! as UITableViewCell
-        let peripheral = BLEList[indexPath.row]
-        NSLog("---BLEListVC--- peripheral = \(peripheral)")
-        cell.textLabel?.text = peripheral.name
+        let bean = BLEList[indexPath.row]
+        NSLog("---BLEListVC--- bean = \(bean)")
+        if bean != BLEManager.shared().myBean {
+            cell.textLabel?.text = bean.name
+        }
+        else{
+            cell.textLabel?.text = nil
+        }
         
         return cell
     }
@@ -151,7 +157,7 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     /** callback function when BLEManager success get new bluetooth devices */
     @objc func loadBLEList(){
         NSLog("---BLEListVC--- reload BLE list")
-        BLEList = BLEManager.shared().peripheralList
+        BLEList = BLEManager.shared().beanList
         bleList.reloadData()
     }
     
@@ -170,6 +176,10 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         })
         alertVC.addAction(action)
         self.present(alertVC, animated: true, completion: nil)
+        
+        //load data to list
+        BLEList = BLEManager.shared().beanList
+        bleList.reloadData()
     }
     
     /** callback function when BLEManager failed connect to selected devices */
@@ -192,7 +202,7 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @objc func BLEDisconnected(){
         NSLog("---BLEStatusVC--- BLE disconnect")
         //load data to list
-        BLEList = BLEManager.shared().peripheralList
+        BLEList = BLEManager.shared().beanList
         bleList.reloadData()
     }
     
@@ -201,7 +211,7 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         addNotificationObserver()
         
         //load data to list
-        BLEList = BLEManager.shared().peripheralList
+        BLEList = BLEManager.shared().beanList
         bleList.reloadData()
         
         //start scan

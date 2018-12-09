@@ -1,0 +1,16 @@
+PODS:
+  - Bean-iOS-OSX-SDK (3.0.6)
+
+DEPENDENCIES:
+  - Bean-iOS-OSX-SDK
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Bean-iOS-OSX-SDK
+
+SPEC CHECKSUMS:
+  Bean-iOS-OSX-SDK: e952c81b35f5b55c6a12c18825c28e118e7a7ed5
+
+PODFILE CHECKSUM: 447e4199ffed1670b7c9c8148fc955ae4d7d999e
+
+COCOAPODS: 1.5.3

@@ -35,9 +35,13 @@
 		8B711A8421B338D000782C76 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA9D5CF521AD792F00F65E5D /* LaunchScreen.storyboard */; };
 		8B711A8621B338D000782C76 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA9D5CF321AD792F00F65E5D /* Assets.xcassets */; };
 		8B711A8721B338D000782C76 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA9D5CF021AD792E00F65E5D /* Main.storyboard */; };
+		8BB4D97E21BD5FCA0006BAB6 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 8BB4D97D21BD5FCA0006BAB6 /* Podfile */; };
+		8BB4D9F421BD642E0006BAB6 /* Pods_FindMyBike.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BB4D9F321BD642E0006BAB6 /* Pods_FindMyBike.framework */; };
+		8BB4D9F621BD64330006BAB6 /* Bean_iOS_OSX_SDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BB4D9F521BD64330006BAB6 /* Bean_iOS_OSX_SDK.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1B76978A892956CF3B4CAE1B /* Pods-FindMyBike-frameworks.sh */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-FindMyBike-frameworks.sh"; path = "../../../../../../../../FindMyBike/Pods/Target Support Files/Pods-FindMyBike/Pods-FindMyBike-frameworks.sh"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B2854A321B522B0005CE723 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		8B2854A421B522B0005CE723 /* CLLocationCoordinate2D+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+Extension.swift"; sourceTree = "<group>"; };
 		8B2854A521B522B0005CE723 /* CLLocation+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocation+Extension.swift"; sourceTree = "<group>"; };
@@ -58,9 +62,13 @@
 		8B70F6C821B2E81A00F094E8 /* BLEListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEListVC.swift; sourceTree = "<group>"; };
 		8B711A8B21B338D000782C76 /* FindMyBike.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FindMyBike.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B711A8C21B338D100782C76 /* FIndMyBike-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FIndMyBike-Info.plist"; sourceTree = "<group>"; };
+		8BB4D97D21BD5FCA0006BAB6 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		8BB4D9F321BD642E0006BAB6 /* Pods_FindMyBike.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_FindMyBike.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8BB4D9F521BD64330006BAB6 /* Bean_iOS_OSX_SDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Bean_iOS_OSX_SDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BCC788021B1536000106CA3 /* Definitions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
 		8BCC788221B153F600106CA3 /* MapVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapVC.swift; sourceTree = "<group>"; };
 		8BCC788421B155FD00106CA3 /* BLEManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEManager.swift; sourceTree = "<group>"; };
+		B10AFE05F5CB223D0A27220C /* Pods-FindMyBike.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FindMyBike.release.xcconfig"; path = "Target Support Files/Pods-FindMyBike/Pods-FindMyBike.release.xcconfig"; sourceTree = "<group>"; };
 		CA9D5CEA21AD792E00F65E5D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CA9D5CEC21AD792E00F65E5D /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		CA9D5CEE21AD792E00F65E5D /* ARVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARVC.swift; sourceTree = "<group>"; };
@@ -68,6 +76,7 @@
 		CA9D5CF321AD792F00F65E5D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA9D5CF621AD792F00F65E5D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CA9D5CF821AD792F00F65E5D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F47255C7A75B8C83C25E5947 /* Pods-FindMyBike.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FindMyBike.debug.xcconfig"; path = "Target Support Files/Pods-FindMyBike/Pods-FindMyBike.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,12 +84,33 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8BB4D9F621BD64330006BAB6 /* Bean_iOS_OSX_SDK.framework in Frameworks */,
+				8BB4D9F421BD642E0006BAB6 /* Pods_FindMyBike.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		225B311EAA67C6CDB4C076EC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8BB4D9F521BD64330006BAB6 /* Bean_iOS_OSX_SDK.framework */,
+				8BB4D9F321BD642E0006BAB6 /* Pods_FindMyBike.framework */,
+				1B76978A892956CF3B4CAE1B /* Pods-FindMyBike-frameworks.sh */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7D2F3FD9C56B255D4FC1F468 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				F47255C7A75B8C83C25E5947 /* Pods-FindMyBike.debug.xcconfig */,
+				B10AFE05F5CB223D0A27220C /* Pods-FindMyBike.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		8B2854AB21B522B0005CE723 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -133,6 +163,8 @@
 				CA9D5CE921AD792E00F65E5D /* FindMyBike */,
 				CA9D5CE821AD792E00F65E5D /* Products */,
 				8B711A8C21B338D100782C76 /* FIndMyBike-Info.plist */,
+				7D2F3FD9C56B255D4FC1F468 /* Pods */,
+				225B311EAA67C6CDB4C076EC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -162,6 +194,7 @@
 				CA9D5CF321AD792F00F65E5D /* Assets.xcassets */,
 				CA9D5CF521AD792F00F65E5D /* LaunchScreen.storyboard */,
 				CA9D5CF821AD792F00F65E5D /* Info.plist */,
+				8BB4D97D21BD5FCA0006BAB6 /* Podfile */,
 			);
 			path = FindMyBike;
 			sourceTree = "<group>";
@@ -173,9 +206,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8B711A8821B338D000782C76 /* Build configuration list for PBXNativeTarget "FindMyBike" */;
 			buildPhases = (
+				8E24540FB816626C5CBA5E08 /* [CP] Check Pods Manifest.lock */,
 				8B711A7A21B338D000782C76 /* Sources */,
 				8B711A8221B338D000782C76 /* Frameworks */,
 				8B711A8321B338D000782C76 /* Resources */,
+				92E60F9CCDC54CD2962F2615 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -219,6 +254,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8BB4D97E21BD5FCA0006BAB6 /* Podfile in Resources */,
 				8B0C674821B6DCBD00DB3806 /* art.scnassets in Resources */,
 				8B711A8421B338D000782C76 /* LaunchScreen.storyboard in Resources */,
 				8B4A966521B632F7005B81A3 /* FIndMyBike-Info.plist in Resources */,
@@ -228,6 +264,53 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8E24540FB816626C5CBA5E08 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FindMyBike-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		92E60F9CCDC54CD2962F2615 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-FindMyBike/Pods-FindMyBike-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Bean-iOS-OSX-SDK/Bean_iOS_OSX_SDK.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bean_iOS_OSX_SDK.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FindMyBike/Pods-FindMyBike-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8B711A7A21B338D000782C76 /* Sources */ = {
@@ -284,6 +367,7 @@
 /* Begin XCBuildConfiguration section */
 		8B711A8921B338D000782C76 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F47255C7A75B8C83C25E5947 /* Pods-FindMyBike.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -305,6 +389,7 @@
 		};
 		8B711A8A21B338D000782C76 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B10AFE05F5CB223D0A27220C /* Pods-FindMyBike.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;

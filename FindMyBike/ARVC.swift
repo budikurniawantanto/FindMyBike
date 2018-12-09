@@ -110,18 +110,20 @@ class ARVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate, CLLocationMa
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         NSLog("---ARVC--- inside didUpdateLocations")
         if let userlocation = locations.last{
-            print("---ARVC--- arlocation: (\(userlocation.coordinate.latitude), \(userlocation.coordinate.longitude))")
-            updateLocation(bikelocation!.coordinate.latitude,bikelocation!.coordinate.longitude)
+            NSLog("---ARVC--- arlocation: (\(userlocation.coordinate.latitude), \(userlocation.coordinate.longitude))")
+            updateLocation(Float(bikelocation!.coordinate.latitude),Float(bikelocation!.coordinate.longitude))
         }
         //let locValue: CLLocationCoordinate2D = (manager.location?.coordinate)!
         //NSLog("---ARVC--- my locations = \(locValue.latitude) \(locValue.longitude)")
     }
     
-    func updateLocation(_ latitude : Double, _ longitude : Double) {
-        let location = CLLocation(latitude: latitude, longitude: longitude)
+    func updateLocation(_ latitude : Float, _ longitude : Float) {
+        let location = CLLocation(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude))
         let locationTransform = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: userlocation!, location: location)
         let position = SCNVector3.positionFromTransform(locationTransform)
         self.distance = Float(location.distance(from: userlocation!))
+        NSLog("---ARVC--- user location = \(userlocation!.coordinate)")
+        NSLog("---ARVC--- bike location = \(bikelocation!.coordinate)")
         
         if self.modelNode == nil {
             let modelScene = SCNScene(named: "art.scnassets/Car.scn")!

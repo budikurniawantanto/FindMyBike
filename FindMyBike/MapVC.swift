@@ -63,7 +63,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
             BLEManager.shared().startScan()
         }
         else{
-            BLEManager.shared().discoveredPeripheral?.readRSSI()
+            GetRSSI()
         }
         
         checkGPSPermission()
@@ -135,8 +135,9 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
         userlocation = locations.last
         NSLog("---MapVC--- didUpdateLocations called, userLocation = (\(userlocation!.coordinate.latitude), \(userlocation!.coordinate.longitude))")
         
-        getBikelocation()
         if !initial {
+            getBikelocation()
+            
             let latDelta = abs(userlocation!.coordinate.latitude - bikelocation!.coordinate.latitude) + 0.01
             let longDelta = abs(userlocation!.coordinate.longitude - bikelocation!.coordinate.longitude) + 0.01
             
@@ -147,25 +148,83 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
             
             let center:CLLocation = CLLocation(latitude: latcen, longitude: longcen)
             let currentRegion:MKCoordinateRegion = MKCoordinateRegion(center: center.coordinate,span: currentLocationSpan)
-            myMapView.setRegion(currentRegion, animated: true)
             
             bikeAnnotation.coordinate = CLLocation(latitude: bikelocation!.coordinate.latitude, longitude: bikelocation!.coordinate.longitude).coordinate
             bikeAnnotation.title = "Bike location"
             bikeAnnotation.subtitle = "updated time: "
             
+            myMapView.setRegion(currentRegion, animated: true)
             myMapView.addAnnotation(bikeAnnotation)
+            
             initial = true
+        }
+        else{
+            routing()
         }
     }
     
     func getBikelocation(){
-        if updated {
+        let lastbikelocation = UserDefaults.standard.dictionary(forKey: "lastbikelocation")
+        if(lastbikelocation != nil){
+            NSLog("---MapVC--- loading last bike location")
+            let locationinfo = UserDefaults.standard.dictionary(forKey: "lastbikelocation")
+            bikelocation = CLLocation(latitude: locationinfo!["latitude"] as! Double, longitude: locationinfo!["longtitude"] as! Double)
+            
+            //testing
+            setBikelocation(userlocation!.coordinate.latitude + 0.001, userlocation!.coordinate.longitude + 0.0006)
         }
+            
         else{
-            bikelocation = CLLocation(latitude: userlocation!.coordinate.latitude + 0.001, longitude: userlocation!.coordinate.longitude + 0.001)
+            //first use
+            NSLog("---MapVC--- first use bike location")
+            let bikelat = userlocation!.coordinate.latitude + 0.001
+            let bikelong = userlocation!.coordinate.longitude + 0.001
+            bikelocation = CLLocation(latitude: bikelat, longitude: bikelong)
+            setBikelocation(bikelat,bikelong)
         }
     }
     
+    func setBikelocation(_ latitude: Double, _ longtitude: Double){
+        let newlocation = ["latitude" : latitude, "longtitude" : longtitude]
+        UserDefaults.standard.set(newlocation, forKey: "lastbikelocation")
+    }
+    
+    func routing(){
+        NSLog("---MapVC--- routing start")
+        let directionRequest = MKDirections.Request()
+        directionRequest.source = MKMapItem(placemark: MKPlacemark(coordinate: userlocation!.coordinate, addressDictionary: nil))
+        directionRequest.destination = MKMapItem(placemark: MKPlacemark(coordinate: bikelocation!.coordinate, addressDictionary: nil))
+        directionRequest.transportType = .automobile
+        
+        // Calculate the direction
+        let directions = MKDirections(request: directionRequest)
+        
+        directions.calculate {
+            (response, error) -> Void in
+            
+            guard let response = response else {
+                if let error = error {
+                    print("Error: \(error)")
+                }
+                
+                return
+            }
+            
+            let route = response.routes[0]
+            NSLog("---MapVC--- route distance = \(route.distance)")
+            self.myMapView.addOverlay((route.polyline), level: MKOverlayLevel.aboveRoads)
+        }
+    }
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        let renderer = MKPolylineRenderer(overlay: overlay)
+        renderer.strokeColor = UIColor.red
+        renderer.lineWidth = 4.0
+        
+        return renderer
+    }
+    
+    /** GPS Permission */
     func checkGPSPermission(){
         //setup location permission
         if CLLocationManager.authorizationStatus() == .notDetermined { // 首次使用 向使用者詢問定位自身位置權限
@@ -223,17 +282,12 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     
     /** initialize BLEManager */
     func initializeBLE(){
-        NSLog("---BLEStatusVC--- initialize BLE : start BLE")
+        NSLog("---MapVC--- initialize BLE : start BLE")
         BLEManager.shared().startBLE()
     }
     
     /** add notification observer */
     func addNotificationObserver(){
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(GetRSSI),
-            name: NSNotification.Name(rawValue: "GetRSSI"),
-            object: nil)
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(BLEdisconnected),
@@ -258,11 +312,11 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     
     /** Notification Handler */
     @objc func GetRSSI(){
-        RSSI = BLEManager.shared().discoveredRSSI!
-        NSLog("---MapVC--- getRSSI = \(RSSI!)")
+        RSSI = BLEManager.shared().myBean?.rssi
+        NSLog("---MapVC--- getRSSI = \(RSSI!), int value = \(RSSI!.intValue)")
         
-        if  RSSI!.intValue < -15 && RSSI!.intValue > -35 {
-            NSLog("---MapVC--- Device not at correct range, RSSI = \(RSSI!)")
+        if  RSSI!.intValue > -15 || RSSI!.intValue < -45 {
+            NSLog("---MapVC--- Device is not at correct range, RSSI = \(RSSI!)")
             ledBtn.backgroundColor = UIColor.white
         }
         else{

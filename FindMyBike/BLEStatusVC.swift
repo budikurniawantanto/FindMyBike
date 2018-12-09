@@ -51,8 +51,8 @@ class BLEStatusVC: UIViewController {
         }
         else{
             bleStatus = "Connected to "
-            NSLog("---BLEStatusVC--- connected peripheral = \(BLEManager.shared().discoveredPeripheral!)")
-            bleStatus.append((BLEManager.shared().discoveredPeripheral?.name)!)
+            NSLog("---BLEStatusVC--- connected bean = \(BLEManager.shared().myBean!)")
+            bleStatus.append((BLEManager.shared().myBean?.name)!)
         }
         NSLog("---BLEStatusVC--- BLE status = \(String(describing: bleStatus))")
         bleStatusLabel.text = bleStatus
