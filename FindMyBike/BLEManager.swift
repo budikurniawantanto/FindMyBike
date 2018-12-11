@@ -21,8 +21,8 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
     fileprivate let data = NSMutableData()
     var isConnected:Bool! = false
     var ledIndex:Int! = 0
-    var valueOn:Int = 1
-    var valueOff:Int = 0
+    var ledOn:Bool = true
+    var ledOff:Bool = false
 
     private static var mInstance:BLEManager?
     static func shared() -> BLEManager {
@@ -82,19 +82,23 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
         }
         
         NSLog("---BLEManager--- Discover a Bean: \(String(describing: bean.name))")
-        /*if bean.name == "FindMyBike BLE" {
-            myBean = bean
-            NSLog("---BLEManager - Bean---  got your bean")
-            connectToBean(bean: myBean!)
-        }*/
-        beanList.append(bean)
+        if !beanList.contains(bean) {
+            beanList.append(bean)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "LoadBLEList"), object: nil)
+        }
     }
     
     // Bean SDK: connects to Bean
     func connectToBean(bean: PTDBean) {
         var error: NSError?
-        NSLog("---BLEManager---  Connect to bean")
+        NSLog("---BLEManager---  Connect to bean : \(String(describing: bean.name))")
         beanManager?.connect(to: bean, error: &error)
+    }
+    
+    func disconnectFromBean(bean: PTDBean){
+        var error: NSError?
+        NSLog("---BLEManager---  Disconnect from bean : \(String(describing: bean.name))")
+        beanManager?.disconnectBean(bean, error: &error)
     }
     
     func beanManager(_ beanManager: PTDBeanManager!, didConnect bean: PTDBean!, error: Error!) {
@@ -124,24 +128,28 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "LoadBLEList"), object: nil)
     }
     
+    
     func bean(_ bean: PTDBean!, serialDataReceived data: Data!) {
         NSLog("---BLEManager--- Get string from Bean: \(data.base64EncodedString())")
+    }
+    
+    func beanDidUpdateRSSI(_ bean: PTDBean!, error: Error!) {
+        NSLog("---BLEManager--- RSSI update : \(String(describing: bean.rssi))")
     }
     
     // Bean SDK: Send serial data to the Bean
     func ChangeLED() {
         if ledIndex == 0 {
-            let data = Data(bytes: &valueOn, count: MemoryLayout.size(ofValue: valueOn))
+            let data = Data(bytes: &ledOn, count: MemoryLayout.size(ofValue: ledOn))
             ledIndex = 1
             NSLog("---BLEManager - Bean---  send data to Bean: \(String(describing: myBean!.name)), data total = \(data.count), turn on led)")
             myBean?.sendSerialData(data)
         }
         else{
-            let data = Data(bytes: &valueOff, count: MemoryLayout.size(ofValue: valueOff))
+            let data = Data(bytes: &ledOff, count: MemoryLayout.size(ofValue: ledOff))
             ledIndex = 0
             NSLog("---BLEManager - Bean---  send data to Bean: \(String(describing: myBean!.name)), data total = \(data.count), turn off led)")
             myBean?.sendSerialData(data)
         }
-        
     }
 }

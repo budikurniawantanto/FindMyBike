@@ -60,28 +60,6 @@ class ARVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate, CLLocationMa
             // 開始定位自身位置
             myLocationManager.startUpdatingLocation()
         }
-        
-//        NSLog("---ARVC--- current location= (\(String(describing: myLocationManager.location?.coordinate.latitude)), \(String(describing: myLocationManager.location?.coordinate.longitude))")
-//        startingLocation = myLocationManager.location;
-//        let navService = NavigationService()
-//
-//        self.destinationLocation = CLLocationCoordinate2D(latitude: 25.061543, longitude: 121.549696)
-//        let request = MKDirections.Request()
-//
-//        NSLog("---ARVC--- getting steps")
-//        if destinationLocation != nil {
-//            navService.getDirections(destinationLocation: destinationLocation, request: request)
-//            {
-//                steps in
-//                for step in steps {
-//                    self.steps.append(step)
-//                    NSLog("---ARVC--- step instruction = \(step.instructions), distance = \(step.distance), location = (\(step.getLocation().coordinate.latitude), \(step.getLocation().coordinate.longitude))")
-//                    self.addSphere(for: step)
-//                }
-//            }
-//        }
-        //NSLog("---ARVC--- add sphere test")
-        //self.addSphere(for: CLLocation.init(latitude: 25.061543, longitude: 121.549696))
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -110,7 +88,7 @@ class ARVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate, CLLocationMa
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         NSLog("---ARVC--- inside didUpdateLocations")
         if let userlocation = locations.last{
-            NSLog("---ARVC--- arlocation: (\(userlocation.coordinate.latitude), \(userlocation.coordinate.longitude))")
+            //NSLog("---ARVC--- arlocation: (\(userlocation.coordinate.latitude), \(userlocation.coordinate.longitude))")
             updateLocation(Float(bikelocation!.coordinate.latitude),Float(bikelocation!.coordinate.longitude))
         }
         //let locValue: CLLocationCoordinate2D = (manager.location?.coordinate)!
@@ -144,6 +122,23 @@ class ARVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate, CLLocationMa
             // Add the model to the scene
             sceneView.scene.rootNode.addChildNode(self.modelNode)
             
+            //add navigation service
+            let navService = NavigationService()
+            let request = MKDirections.Request()
+            self.destinationLocation = CLLocationCoordinate2D(latitude: (bikelocation?.coordinate.latitude)!, longitude: (bikelocation?.coordinate.longitude)!)
+
+            NSLog("---ARVC--- getting steps")
+            if destinationLocation != nil {
+                navService.getDirections(destinationLocation: destinationLocation, request: request)
+                {
+                    steps in
+                    for step in steps {
+                        self.steps.append(step)
+                        NSLog("---ARVC--- step instruction = \(step.instructions), distance = \(step.distance), location = (\(step.getLocation().coordinate.latitude), \(step.getLocation().coordinate.longitude))")
+                        self.addSphere(for: step)
+                    }
+                }
+            }
         } else {
             // Begin animation
             SCNTransaction.begin()
@@ -155,6 +150,19 @@ class ARVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate, CLLocationMa
             modelNode.position = position
             modelNode.scale = SCNVector3(x: scale, y: scale, z: scale)
             
+            //re-place nodes
+            for baseNode in nodes {
+                let translation = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: userlocation!, location: baseNode.location)
+                let position = SCNVector3.positionFromTransform(translation)
+                let distance = baseNode.location.distance(from: userlocation!)
+                DispatchQueue.main.async {
+                    let scale = 100 / Float(distance)
+                    baseNode.scale = SCNVector3(x: scale, y: scale, z: scale)
+                    baseNode.anchor = ARAnchor(transform: translation)
+                    baseNode.position = position
+                }
+            }
+            
             // End animation
             SCNTransaction.commit()
         }
@@ -164,7 +172,7 @@ class ARVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate, CLLocationMa
     func addSphere(for step: MKRoute.Step) {
         let stepLocation = step.getLocation()
         NSLog("---ARVC--- stepLocation = \(stepLocation.coordinate)")
-        let locationTransform = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: startingLocation, location: stepLocation)
+        let locationTransform = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: userlocation!, location: stepLocation)
         let position = SCNVector3.positionFromTransform(locationTransform)
         let stepAnchor = ARAnchor(transform: locationTransform)
         
@@ -172,13 +180,14 @@ class ARVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate, CLLocationMa
         
         let sphere = BaseNode(title: step.instructions, location: stepLocation)
         if step.instructions.isEmpty {
-            sphere.addNode(with: 0.5, and: .yellow, and: "Start")
+            NSLog("---ARVC--- step instruction is empty")
+            sphere.addNode(with: 0.5, and: .blue, and: "Start")
         }
         else{
             sphere.addNode(with: 0.5, and: .yellow, and: step.instructions)
         }
         sphere.location = stepLocation
-        let distance = sphere.location.distance(from: startingLocation)
+        let distance = sphere.location.distance(from: userlocation!)
         let scale = 20 / Float(distance)
         sphere.scale = SCNVector3(x: scale, y: scale, z: scale)
         sphere.position = position
@@ -187,10 +196,10 @@ class ARVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate, CLLocationMa
         sceneView.session.add(anchor: stepAnchor)
         sceneView.scene.rootNode.addChildNode(sphere)
         
-        NSLog("---ARVC--- starting location = \(startingLocation.coordinate)")
-        NSLog("---ARVC--- destination = \(sphere.location.coordinate)")
-        NSLog("---ARVC--- distance = \(distance)")
-        NSLog("---ARVC--- sphere position = \(sphere.position)")
+//        NSLog("---ARVC--- starting location = \(userlocation!.coordinate)")
+//        NSLog("---ARVC--- destination = \(sphere.location.coordinate)")
+//        NSLog("---ARVC--- distance = \(distance)")
+//        NSLog("---ARVC--- sphere position = \(sphere.position)")
         nodes.append(sphere)
     }
     

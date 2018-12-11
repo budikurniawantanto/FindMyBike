@@ -11,7 +11,10 @@ import UIKit
 class BLEStatusVC: UIViewController {
 
     var bleStatus: String! = ""
+    var defaultColor: UIColor?
     @IBOutlet weak var bleStatusLabel: UILabel!
+    @IBOutlet weak var disconnectBtn: UIButton!
+    @IBOutlet weak var changeBtn: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +30,7 @@ class BLEStatusVC: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        defaultColor = changeBtn.backgroundColor
         addNotificationObserver()
         checkConnection()
         //BLEManager.shared().checkBluetoothConnection()
@@ -48,14 +52,22 @@ class BLEStatusVC: UIViewController {
         // Do any additional setup after loading the view.
         if BLEManager.shared().isConnected == false {
             bleStatus = "Disconnected"
+            disconnectBtn.isEnabled = false
+            disconnectBtn.backgroundColor = UIColor.lightGray
         }
         else{
             bleStatus = "Connected to "
             NSLog("---BLEStatusVC--- connected bean = \(BLEManager.shared().myBean!)")
             bleStatus.append((BLEManager.shared().myBean?.name)!)
+            disconnectBtn.isEnabled = true
+            disconnectBtn.backgroundColor = defaultColor
         }
         NSLog("---BLEStatusVC--- BLE status = \(String(describing: bleStatus))")
         bleStatusLabel.text = bleStatus
+    }
+    
+    @IBAction func press_disconnectBtn(_ sender: Any) {
+        BLEManager.shared().disconnectFromBean(bean: BLEManager.shared().myBean!)
     }
     
     /** add notification observer */
@@ -97,11 +109,15 @@ class BLEStatusVC: UIViewController {
         NSLog("---BLEStatusVC--- BLE disconnect")
         bleStatus = "Disconnected"
         bleStatusLabel.text = bleStatus
+        disconnectBtn.isEnabled = false
+        disconnectBtn.backgroundColor = UIColor.lightGray
     }
     
     @objc func BLEFailToConnect(){
         NSLog("---BLEStatusVC--- BLE fail to connect")
         bleStatus = "Disconnected"
         bleStatusLabel.text = bleStatus
+        disconnectBtn.isEnabled = false
+        disconnectBtn.backgroundColor = UIColor.lightGray
     }
 }

@@ -43,7 +43,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
         
         myMapView.delegate = self
         myMapView.showsUserLocation = true
-        myMapView.userTrackingMode = .follow
+        myMapView.userTrackingMode = .followWithHeading
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -60,6 +60,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
         
         //setup BLE connection
         if BLEManager.shared().isConnected == false {
+            ledBtn.backgroundColor = UIColor.white
             BLEManager.shared().startScan()
         }
         else{
@@ -315,7 +316,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
         RSSI = BLEManager.shared().myBean?.rssi
         NSLog("---MapVC--- getRSSI = \(RSSI!), int value = \(RSSI!.intValue)")
         
-        if  RSSI!.intValue > -15 || RSSI!.intValue < -45 {
+        if  RSSI!.intValue > -15 || RSSI!.intValue < -60 {
             NSLog("---MapVC--- Device is not at correct range, RSSI = \(RSSI!)")
             ledBtn.backgroundColor = UIColor.white
         }

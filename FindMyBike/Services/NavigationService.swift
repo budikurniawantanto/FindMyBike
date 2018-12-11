@@ -21,10 +21,8 @@ struct NavigationService{
         request.source = MKMapItem.forCurrentLocation()
         request.requestsAlternateRoutes = false
         request.transportType = .walking
-        //print("---NavigationService--- request = \(request), source = ())")
         
         let directions = MKDirections(request: request)
-        //print("---NavigationService--- directions = \(directions)")
         
         directions.calculate { response, error in
             if error != nil {
