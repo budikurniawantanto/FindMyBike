@@ -208,7 +208,6 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @objc func AppGoToForeground(){
         NSLog("---MapVC--- App go to foreground")
-        addNotificationObserver()
         
         //load data to list
         BLEList = BLEManager.shared().beanList
@@ -221,6 +220,5 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @objc func AppGoToBackground(){
         NSLog("---MapVC--- App go to background")
         BLEManager.shared().stopScan()
-        NotificationCenter.default.removeObserver(self)
     }
 }

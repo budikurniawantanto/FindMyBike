@@ -18,14 +18,26 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="cac-ld-ObQ">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FdC-i5-yLs">
+                                <rect key="frame" x="0.0" y="88" width="375" height="341"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </arscnView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" text="distance" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="dUZ-nz-hZj">
+                                <rect key="frame" x="0.0" y="88" width="375" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="AX9-c7-pnn">
+                                <rect key="frame" x="0.0" y="427" width="375" height="351"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </mapView>
-                            <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZMo-Vy-wCH">
-                                <rect key="frame" x="121" y="693" width="45" height="45"/>
+                            <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RbI-SG-zxc">
+                                <rect key="frame" x="110" y="711" width="45" height="45"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <viewLayoutGuide key="safeArea" id="vTb-4r-n3z"/>
+                                <viewLayoutGuide key="safeArea" id="8ID-yA-MxM"/>
                                 <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="18"/>
                                 <inset key="imageEdgeInsets" minX="13" minY="13" maxX="13" maxY="13"/>
                                 <state key="normal" image="flashlight-icon-7"/>
@@ -36,33 +48,13 @@
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="clipsToBounds" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <action selector="press_ledBtn:" destination="bGM-9M-eeq" eventType="touchUpInside" id="L4t-Qp-Qix"/>
+                                    <action selector="press_ledBtn:" destination="bGM-9M-eeq" eventType="touchUpInside" id="dwM-Fc-fYJ"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="fill" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wAK-qI-cip">
-                                <rect key="frame" x="220" y="693" width="45" height="45"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3g8-Ts-6pk">
+                                <rect key="frame" x="219" y="711" width="45" height="45"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.44592932816428732" green="0.53070104523278006" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                <viewLayoutGuide key="safeArea" id="fzE-BB-37x"/>
-                                <inset key="imageEdgeInsets" minX="15" minY="15" maxX="0.0" maxY="15"/>
-                                <state key="normal" title="AR">
-                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
-                                </state>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="23"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="clipsToBounds" value="YES"/>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="press_arBtn:" destination="bGM-9M-eeq" eventType="touchUpInside" id="wgF-hh-a81"/>
-                                    <segue destination="BV1-FR-VrT" kind="show" id="Pmk-N3-Kqk"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w4G-b6-YOd">
-                                <rect key="frame" x="300" y="114" width="45" height="45"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.10295217705848345" green="0.24669127245519165" blue="0.5096947862694301" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <color key="backgroundColor" red="0.1029521771" green="0.2466912725" blue="0.50969478629999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <inset key="imageEdgeInsets" minX="5" minY="5" maxX="5" maxY="5"/>
                                 <state key="normal" image="2000px-Bluetooth.svg">
                                     <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -74,24 +66,19 @@
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="clipsToBounds" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <segue destination="ClQ-aC-3tq" kind="show" id="6rN-Lm-RiR"/>
+                                    <segue destination="ClQ-aC-3tq" kind="show" id="2d7-BA-SRY"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <constraints>
-                            <constraint firstItem="cac-ld-ObQ" firstAttribute="trailing" secondItem="ReM-pc-A50" secondAttribute="trailing" id="Ned-Pp-UZp"/>
-                            <constraint firstItem="cac-ld-ObQ" firstAttribute="bottom" secondItem="ReM-pc-A50" secondAttribute="bottom" id="X7a-dA-N4y"/>
-                            <constraint firstItem="cac-ld-ObQ" firstAttribute="top" secondItem="rwi-I6-aX2" secondAttribute="top" id="XAo-Zs-jng"/>
-                            <constraint firstItem="cac-ld-ObQ" firstAttribute="leading" secondItem="ReM-pc-A50" secondAttribute="leading" id="YoX-kb-TKq"/>
-                        </constraints>
                         <viewLayoutGuide key="safeArea" id="ReM-pc-A50"/>
                     </view>
                     <navigationItem key="navigationItem" title="Map" id="R3Q-v4-7nM"/>
                     <connections>
-                        <outlet property="arBtn" destination="wAK-qI-cip" id="Tu6-18-fXT"/>
-                        <outlet property="ledBtn" destination="ZMo-Vy-wCH" id="fpN-t1-aD1"/>
-                        <outlet property="myMapView" destination="cac-ld-ObQ" id="Dgo-0m-mzP"/>
+                        <outlet property="ledBtn" destination="RbI-SG-zxc" id="BiS-Jw-zaU"/>
+                        <outlet property="myMapView" destination="AX9-c7-pnn" id="xf0-e4-tSX"/>
+                        <outlet property="sceneView" destination="FdC-i5-yLs" id="fPu-J5-Hzq"/>
+                        <outlet property="statusTextView" destination="dUZ-nz-hZj" id="BxS-s3-FpL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KcX-tp-snW" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -165,7 +152,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="k9q-an-i0N" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-711.20000000000005" y="-637.6847290640394"/>
+            <point key="canvasLocation" x="-719" y="25"/>
         </scene>
         <!--ListVC-->
         <scene sceneID="vAP-Io-AFW">
@@ -241,7 +228,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VFs-Hs-1mt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="36" y="-637.6847290640394"/>
+            <point key="canvasLocation" x="87" y="26"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="NR0-Ne-ufk">
@@ -258,43 +245,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ThB-4S-mFF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-2439" y="26"/>
-        </scene>
-        <!--ARVC-->
-        <scene sceneID="tXr-a1-R10">
-            <objects>
-                <viewController id="BV1-FR-VrT" customClass="ARVC" customModule="FindMyBike" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="U0K-SW-4ec">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BrB-h1-WRS">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
-                            </arscnView>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" text="distance" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="rF7-Zf-MLu">
-                                <rect key="frame" x="0.0" y="88" width="375" height="33"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
-                        </subviews>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <constraints>
-                            <constraint firstItem="BrB-h1-WRS" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" id="GsS-dJ-CKf"/>
-                            <constraint firstItem="BrB-h1-WRS" firstAttribute="bottom" secondItem="fQZ-KI-GVf" secondAttribute="bottom" id="VpT-BR-CcM"/>
-                            <constraint firstItem="BrB-h1-WRS" firstAttribute="trailing" secondItem="fQZ-KI-GVf" secondAttribute="trailing" id="XyZ-9z-H8e"/>
-                            <constraint firstItem="BrB-h1-WRS" firstAttribute="top" secondItem="U0K-SW-4ec" secondAttribute="top" id="rJc-2c-zQA"/>
-                        </constraints>
-                        <viewLayoutGuide key="safeArea" id="fQZ-KI-GVf"/>
-                    </view>
-                    <connections>
-                        <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
-                        <outlet property="statusTextView" destination="rF7-Zf-MLu" id="m6g-R0-Lft"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-711.20000000000005" y="25.862068965517242"/>
         </scene>
     </scenes>
     <resources>

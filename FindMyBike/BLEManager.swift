@@ -111,6 +111,7 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
             NSLog("---BLEManager--- Connected to Bean: \(String(describing: bean.name))")
             isConnected = true
             myBean = bean
+            myBean?.readAccelerationAxes()
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "BLEConnectSuccess"), object: nil)
         }
     }
@@ -135,6 +136,13 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
     
     func beanDidUpdateRSSI(_ bean: PTDBean!, error: Error!) {
         NSLog("---BLEManager--- RSSI update : \(String(describing: bean.rssi))")
+    }
+    
+    func bean(_ bean: PTDBean!, didUpdateAccelerationAxes acceleration: PTDAcceleration) {
+        NSLog("---BLEManager--- acceleration updated : \(acceleration.x), \(acceleration.y), \(acceleration.z)")
+        if acceleration.x == 0 && acceleration.y == 0 && acceleration.z == 0 {
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "UpdateBikeLocation"), object: nil)
+        }
     }
     
     // Bean SDK: Send serial data to the Bean

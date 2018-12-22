@@ -7,18 +7,21 @@
 //
 
 import UIKit
+import SceneKit
+import ARKit
 import MapKit
 import CoreBluetooth
 import CoreLocation
 
 var userlocation :CLLocation?
 var bikelocation :CLLocation?
+var DataMgr = DataManager()
 
-class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
-
-    @IBOutlet weak var myMapView: MKMapView!
-    @IBOutlet weak var ledBtn: UIButton!
-    @IBOutlet weak var arBtn: UIButton!
+class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARSCNViewDelegate, ARSessionDelegate{
+    /** MAP VARIABLE **/
+    @IBOutlet var myMapView: MKMapView!
+    var headingImageView: UIImageView?
+    @IBOutlet var ledBtn: UIButton!
     
     var peripheral: CBPeripheral?
     var RSSI: NSNumber?
@@ -27,33 +30,67 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     var initial = false
     var updated = false
     
+    /** AR VARIABLE **/
+    @IBOutlet weak var statusTextView: UITextView!
+    @IBOutlet var sceneView: ARSCNView!
+    
+    var steps: [MKRoute.Step] = []
+    var anchors: [ARAnchor] = []
+    var startingLocation: CLLocation!
+    var nodes: [BaseNode] = []
+    var destinationLocation: CLLocationCoordinate2D!
+    
+    var modelNode:SCNNode!
+    let rootNodeName = "Car"
+    var originalTransform:SCNMatrix4!
+    var distance : Float! = 0.0{
+        didSet {
+            setStatusText()
+        }
+    }
+    var status: String!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        addNotificationObserver()
         initializeBLE()
-        myLocationManager.delegate = self
         
-        // 距離篩選器 用來設置移動多遠距離才觸發委任方法更新位置
-        myLocationManager.distanceFilter = kCLLocationAccuracyNearestTenMeters
-        
-        // 取得自身定位位置的精確度
-        myLocationManager.desiredAccuracy = kCLLocationAccuracyBest
-        
+        /*** MAP FUNCTION ***/
         myMapView.delegate = self
         myMapView.showsUserLocation = true
         myMapView.userTrackingMode = .followWithHeading
+        
+        myLocationManager.delegate = self
+        // 距離篩選器 用來設置移動多遠距離才觸發委任方法更新位置
+        myLocationManager.distanceFilter = kCLLocationAccuracyNearestTenMeters
+        // 取得自身定位位置的精確度
+        myLocationManager.desiredAccuracy = kCLLocationAccuracyBest
+        
+        /*** AR FUNCTION ***/
+        // Set the view's delegate
+        sceneView.delegate = self
+        // Show statistics such as fps and timing information
+        sceneView.showsStatistics = true
+        let scene = SCNScene()
+        sceneView.scene = scene
     }
     
     override func viewWillAppear(_ animated: Bool) {
         //NSLog("---MapVC--- viewWillAppear")
         super.viewWillAppear(animated)
+        
+        // Create a session configuration
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.worldAlignment = .gravityAndHeading
+        
+        // Run the view's session
+        sceneView.session.run(configuration)
     }
     
     /** callback function when MapVC is re-appear */
     override func viewDidAppear(_ animated: Bool) {
-        NSLog("---MapVC--- viewDidAppear")
+        //NSLog("---MapVC--- viewDidAppear")
         super.viewDidAppear(animated)
         
         addNotificationObserver()
@@ -75,6 +112,9 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
         super.viewWillDisappear(animated)
         BLEManager.shared().stopScan()
         NotificationCenter.default.removeObserver(self)
+        
+        // Pause the view's session
+        sceneView.session.pause()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -127,69 +167,55 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
         }
     }
     
-    /** Define action when user press AR button */
-    @IBAction func press_arBtn(_ sender: Any) {
-    }
-    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // 印出目前所在位置座標
         userlocation = locations.last
-        NSLog("---MapVC--- didUpdateLocations called, userLocation = (\(userlocation!.coordinate.latitude), \(userlocation!.coordinate.longitude))")
+        //NSLog("---MapVC--- didUpdateLocations called, userLocation = (\(userlocation!.coordinate.latitude), \(userlocation!.coordinate.longitude))")
         
         if !initial {
-            getBikelocation()
-            
-            let latDelta = abs(userlocation!.coordinate.latitude - bikelocation!.coordinate.latitude) + 0.01
-            let longDelta = abs(userlocation!.coordinate.longitude - bikelocation!.coordinate.longitude) + 0.01
-            
-            let latcen = (userlocation!.coordinate.latitude + bikelocation!.coordinate.latitude)/2
-            let longcen = (userlocation!.coordinate.longitude + bikelocation!.coordinate.longitude)/2
-            
-            let currentLocationSpan:MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: longDelta)
-            
-            let center:CLLocation = CLLocation(latitude: latcen, longitude: longcen)
-            let currentRegion:MKCoordinateRegion = MKCoordinateRegion(center: center.coordinate,span: currentLocationSpan)
+            bikelocation = DataMgr.getBikelocation()
             
             bikeAnnotation.coordinate = CLLocation(latitude: bikelocation!.coordinate.latitude, longitude: bikelocation!.coordinate.longitude).coordinate
             bikeAnnotation.title = "Bike location"
             bikeAnnotation.subtitle = "updated time: "
-            
-            myMapView.setRegion(currentRegion, animated: true)
             myMapView.addAnnotation(bikeAnnotation)
             
             initial = true
         }
-        else{
-            routing()
-        }
+        
+        routing()
+        setMapCamera()
+        
+        /*** AR FUNCTION ***/
+        updateLocation(Float(bikelocation!.coordinate.latitude),Float(bikelocation!.coordinate.longitude))
     }
     
-    func getBikelocation(){
-        let lastbikelocation = UserDefaults.standard.dictionary(forKey: "lastbikelocation")
-        if(lastbikelocation != nil){
-            NSLog("---MapVC--- loading last bike location")
-            let locationinfo = UserDefaults.standard.dictionary(forKey: "lastbikelocation")
-            bikelocation = CLLocation(latitude: locationinfo!["latitude"] as! Double, longitude: locationinfo!["longtitude"] as! Double)
-            
-            //testing
-            setBikelocation(userlocation!.coordinate.latitude + 0.001, userlocation!.coordinate.longitude + 0.0006)
-        }
-            
-        else{
-            //first use
-            NSLog("---MapVC--- first use bike location")
-            let bikelat = userlocation!.coordinate.latitude + 0.001
-            let bikelong = userlocation!.coordinate.longitude + 0.001
-            bikelocation = CLLocation(latitude: bikelat, longitude: bikelong)
-            setBikelocation(bikelat,bikelong)
-        }
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        if newHeading.headingAccuracy < 0 { return }
+        
+        //NSLog("---MapVC--- inside didUpdateHeading, frame = \(String(describing: headingImageView?.frame))")
+        let heading = newHeading.trueHeading > 0 ? newHeading.trueHeading: newHeading.magneticHeading
+        headingImageView?.isHidden = false
+        let rotation = CGFloat(Double.pi * (heading/180))
+        headingImageView?.transform = CGAffineTransform(rotationAngle: rotation)
+        
+        myMapView.camera.heading = heading
+        myMapView.setCamera(myMapView.camera, animated: true)
     }
     
-    func setBikelocation(_ latitude: Double, _ longtitude: Double){
-        let newlocation = ["latitude" : latitude, "longtitude" : longtitude]
-        UserDefaults.standard.set(newlocation, forKey: "lastbikelocation")
+    func setMapCamera(){
+        let latcen = (userlocation!.coordinate.latitude + bikelocation!.coordinate.latitude)/2
+        let longcen = (userlocation!.coordinate.longitude + bikelocation!.coordinate.longitude)/2
+        
+        let centerCoordinate = CLLocationCoordinate2D(latitude: latcen, longitude: longcen)
+        let distance = Double((userlocation?.distance(from: bikelocation!))!)
+        let altitude = distance / tan(Double.pi * (15/180.0));
+        
+        myMapView.camera.centerCoordinate = centerCoordinate
+        myMapView.camera.altitude = altitude
+        myMapView.setCamera(myMapView.camera, animated: true)
     }
-    
+
     func routing(){
         NSLog("---MapVC--- routing start")
         let directionRequest = MKDirections.Request()
@@ -225,6 +251,22 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
         return renderer
     }
     
+    /** ADD BLUEW ARROW **/
+    func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
+        if views.last?.annotation is MKUserLocation{
+            //NSLog("---MapVC--- inside didAdd views,  addHeadingView start")
+            addHeadingView(toAnnotationView: views.last!)
+        }
+    }
+    
+    func addHeadingView(toAnnotationView annotationView: MKAnnotationView){
+        let blueArrow = UIImage(named: "arrow")
+        headingImageView = UIImageView(image: blueArrow)
+        headingImageView!.frame = CGRect(x: (annotationView.frame.size.width - blueArrow!.size.width)/2, y: (annotationView.frame.size.height - blueArrow!.size.height)/2, width: blueArrow!.size.width, height: blueArrow!.size.height)
+        annotationView.insertSubview(headingImageView!, at: 0)
+        headingImageView!.isHidden = true
+    }
+    
     /** GPS Permission */
     func checkGPSPermission(){
         //setup location permission
@@ -237,6 +279,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
             // 開始定位自身位置
             NSLog("---MapVC--- startUpdatingLocation")
             myLocationManager.startUpdatingLocation()
+            myLocationManager.startUpdatingHeading()
         }
         else if CLLocationManager.authorizationStatus() == .denied { // 使用者已經拒絕定位自身位置權限
             // 提示可至[設定]中開啟權限
@@ -278,6 +321,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
             }
             // 開始定位自身位置
             myLocationManager.startUpdatingLocation()
+            myLocationManager.startUpdatingHeading()
         }
     }
     
@@ -298,6 +342,11 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
             self,
             selector: #selector(BLEFailToConnect),
             name: NSNotification.Name(rawValue: "BLEFailToConnect"),
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(UpdateBikeLocation),
+            name: NSNotification.Name(rawValue: "UpdateBikeLocation"),
             object: nil)
         NotificationCenter.default.addObserver(
             self,
@@ -330,13 +379,17 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
         NSLog("---MapVC--- App go to foreground")
         checkGPSPermission()
         BLEManager.shared().startScan()
-        addNotificationObserver()
+        
+        sceneView.session.run(sceneView.session.configuration!)
     }
     
     @objc func AppGoToBackground(){
         NSLog("---MapVC--- App go to background")
         BLEManager.shared().stopScan()
-        NotificationCenter.default.removeObserver(self)
+        //NotificationCenter.default.removeObserver(self)
+        
+        // Pause the view's session
+        sceneView.session.pause()
     }
     
     @objc func BLEdisconnected(){
@@ -357,7 +410,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     }
     
     @objc func BLEFailToConnect(){
-        NSLog("---BLEListVC--- BLE connection failed")
+        NSLog("---MapVC--- BLE connection failed")
         let alertVC = UIAlertController(
             title: "Connection Result",
             message: "Failed. Please try to connect other device",
@@ -371,5 +424,163 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
         alertVC.addAction(action)
         self.present(alertVC, animated: true, completion: nil)
         ledBtn.backgroundColor = UIColor.white
+    }
+    
+    @objc func UpdateBikeLocation(){
+        NSLog("---MapVC--- update bike location")
+        DataMgr.setBikelocation((userlocation?.coordinate.latitude)!, (userlocation?.coordinate.longitude)!)
+    }
+    
+    /****** AR FUNCTION ******/
+    func updateLocation(_ latitude : Float, _ longitude : Float) {
+        let location = CLLocation(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude))
+        let locationTransform = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: userlocation!, location: location)
+        let position = SCNVector3.positionFromTransform(locationTransform)
+        self.distance = Float(location.distance(from: userlocation!))
+        NSLog("---ARVC--- user location = \(userlocation!.coordinate)")
+        NSLog("---ARVC--- bike location = \(bikelocation!.coordinate)")
+        
+        if self.modelNode == nil {
+            let modelScene = SCNScene(named: "art.scnassets/Car.scn")!
+            self.modelNode = modelScene.rootNode.childNode(withName: rootNodeName, recursively: true)!
+            // Move model's pivot to its center in the Y axis
+            let (minBox, maxBox) = self.modelNode.boundingBox
+            self.modelNode.pivot = SCNMatrix4MakeTranslation(0, (maxBox.y - minBox.y)/2, 0)
+            
+            // Save original transform to calculate future rotations
+            self.originalTransform = self.modelNode.transform
+            
+            // Position the model in the correct place
+            //positionModel(location)
+            let scale = max( min( Float(1000/distance), 1.5 ), 3 )
+            modelNode.position = position
+            modelNode.scale = SCNVector3(x: scale, y: scale, z: scale)
+            
+            // Add the model to the scene
+            sceneView.scene.rootNode.addChildNode(self.modelNode)
+            
+            //add navigation service
+            let navService = NavigationService()
+            let request = MKDirections.Request()
+            self.destinationLocation = CLLocationCoordinate2D(latitude: (bikelocation?.coordinate.latitude)!, longitude: (bikelocation?.coordinate.longitude)!)
+            
+            NSLog("---ARVC--- getting steps")
+            if destinationLocation != nil {
+                navService.getDirections(destinationLocation: destinationLocation, request: request)
+                {
+                    steps in
+                    for step in steps {
+                        self.steps.append(step)
+                        //NSLog("---ARVC--- step instruction = \(step.instructions), distance = \(step.distance), location = (\(step.getLocation().coordinate.latitude), \(step.getLocation().coordinate.longitude))")
+                        self.addSphere(for: step)
+                    }
+                }
+            }
+        } else {
+            // Begin animation
+            SCNTransaction.begin()
+            SCNTransaction.animationDuration = 1.0
+            
+            // Position the model in the correct place
+            //positionModel(location)
+            let scale = max( min( Float(1000/distance), 1.5 ), 3 )
+            modelNode.position = position
+            modelNode.scale = SCNVector3(x: scale, y: scale, z: scale)
+            
+            //re-place nodes
+            for baseNode in nodes {
+                let translation = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: userlocation!, location: baseNode.location)
+                let position = SCNVector3.positionFromTransform(translation)
+                let distance = baseNode.location.distance(from: userlocation!)
+                DispatchQueue.main.async {
+                    let scale = 100 / Float(distance)
+                    baseNode.scale = SCNVector3(x: scale, y: scale, z: scale)
+                    baseNode.anchor = ARAnchor(transform: translation)
+                    baseNode.position = position
+                }
+            }
+            
+            // End animation
+            SCNTransaction.commit()
+        }
+    }
+    // For navigation route step add sphere node
+    
+    func addSphere(for step: MKRoute.Step) {
+        let stepLocation = step.getLocation()
+        NSLog("---ARVC--- stepLocation = \(stepLocation.coordinate), stepInstruction = \(step.instructions)")
+        let locationTransform = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: userlocation!, location: stepLocation)
+        let position = SCNVector3.positionFromTransform(locationTransform)
+        let stepAnchor = ARAnchor(transform: locationTransform)
+        
+        anchors.append(stepAnchor)
+        
+        let sphere = BaseNode(title: step.instructions, location: stepLocation)
+        if step.instructions.isEmpty {
+            //NSLog("---ARVC--- step instruction is empty")
+            //sphere.addNode(with: 0.5, and: .blue, and: "Start")
+        }
+        else{
+            sphere.addNode(with: 0.5, and: .blue, and: step.instructions)
+        }
+        sphere.location = stepLocation
+        let distance = sphere.location.distance(from: userlocation!)
+        let scale = 20 / Float(distance)
+        sphere.scale = SCNVector3(x: scale, y: scale, z: scale)
+        sphere.position = position
+        sphere.anchor = stepAnchor
+        
+        sceneView.session.add(anchor: stepAnchor)
+        sceneView.scene.rootNode.addChildNode(sphere)
+        
+        //        NSLog("---ARVC--- starting location = \(userlocation!.coordinate)")
+        //        NSLog("---ARVC--- destination = \(sphere.location.coordinate)")
+        //        NSLog("---ARVC--- distance = \(distance)")
+        //        NSLog("---ARVC--- sphere position = \(sphere.position)")
+        nodes.append(sphere)
+    }
+    
+    // For intermediary locations - CLLocation - add sphere
+    private func addSphere(for location: CLLocation) {
+        let locationTransform = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: startingLocation, location: location)
+        let position = SCNVector3.positionFromTransform(locationTransform)
+        let stepAnchor = ARAnchor(transform: locationTransform)
+        anchors.append(stepAnchor)
+        
+        let sphere = BaseNode(title: "Title", location: location)
+        sphere.addSphere(with: 0.5, and: .blue)
+        sphere.location = location
+        let distance = sphere.location.distance(from: startingLocation)
+        let scale = 10 / Float(distance)
+        sphere.scale = SCNVector3(x: scale, y: scale, z: scale)
+        sphere.position = position
+        sphere.anchor = stepAnchor
+        sceneView.scene.rootNode.addChildNode(sphere)
+        sceneView.session.add(anchor: stepAnchor)
+        nodes.append(sphere)
+        
+        NSLog("---ARVC--- starting location = \(startingLocation.coordinate)")
+        NSLog("---ARVC--- destination = \(sphere.location.coordinate)")
+        NSLog("---ARVC--- distance = \(distance)")
+        NSLog("---ARVC--- sphere position = \(sphere.position)")
+    }
+    
+    func setStatusText() {
+        statusTextView.text = "Distance: \(String(format: "%.2f m", distance))"
+    }
+    
+    func session(_ session: ARSession, didFailWithError error: Error) {
+        // Present an error message to the user
+        
+    }
+    
+    func sessionWasInterrupted(_ session: ARSession) {
+        // Inform the user that the session has been interrupted, for example, by presenting an overlay
+        
+    }
+    
+    func sessionInterruptionEnded(_ session: ARSession) {
+        // Reset tracking and/or remove existing anchors if consistent tracking is required
+        
     }
 }

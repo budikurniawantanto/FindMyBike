@@ -18,7 +18,6 @@ class BLEStatusVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -96,13 +95,11 @@ class BLEStatusVC: UIViewController {
     
     @objc func AppGoToForeground(){
         NSLog("---MapVC--- App go to foreground")
-        addNotificationObserver()
         checkConnection()
     }
     
     @objc func AppGoToBackground(){
         NSLog("---MapVC--- App go to background")
-        NotificationCenter.default.removeObserver(self)
     }
     
     @objc func BLEDisconnected(){
