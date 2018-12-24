@@ -7,6 +7,7 @@
 //
 
 import CoreBluetooth
+import UIKit
 
 let MAC_PERIPHERAL = "609E5D1A-7FEC-6CE3-85C1-06D0E9A51AB1"
 let MAC_TRANSFER_SERVICE_UUID = "ec00"
@@ -23,3 +24,7 @@ let MACtransferServiceUUID = CBUUID(string: MAC_TRANSFER_SERVICE_UUID)
 let MACtransferCharacteristicUUID = CBUUID(string: MAC_TRANSFER_CHARACTERISTIC_UUID)
 let BLEtransferServiceUUID = CBUUID(string: BLE_TRANSFER_SERVICE_UUID)
 let BLEtransferCharacteristicUUID = CBUUID(string: BLE_TRANSFER_CHARACTERISTIC_UUID)
+
+var isFetch = (UIScreen.main.bounds.size.height == 812) || (UIScreen.main.bounds.size.height == 896)
+var screenH: CGFloat! = 0
+

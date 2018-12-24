@@ -18,9 +18,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FdC-i5-yLs">
-                                <rect key="frame" x="0.0" y="88" width="375" height="341"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FdC-i5-yLs">
+                                <rect key="frame" x="0.0" y="88" width="375" height="345"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="345" id="jQE-DP-Dta"/>
+                                </constraints>
                             </arscnView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" text="distance" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="dUZ-nz-hZj">
                                 <rect key="frame" x="0.0" y="88" width="375" height="33"/>
@@ -29,55 +31,106 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="AX9-c7-pnn">
-                                <rect key="frame" x="0.0" y="427" width="375" height="351"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="AX9-c7-pnn">
+                                <rect key="frame" x="0.0" y="433" width="375" height="345"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="345" id="mQO-zq-WBy"/>
+                                </constraints>
                             </mapView>
-                            <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RbI-SG-zxc">
-                                <rect key="frame" x="110" y="711" width="45" height="45"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <viewLayoutGuide key="safeArea" id="8ID-yA-MxM"/>
-                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="18"/>
-                                <inset key="imageEdgeInsets" minX="13" minY="13" maxX="13" maxY="13"/>
-                                <state key="normal" image="flashlight-icon-7"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="23"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="clipsToBounds" value="YES"/>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="press_ledBtn:" destination="bGM-9M-eeq" eventType="touchUpInside" id="dwM-Fc-fYJ"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3g8-Ts-6pk">
-                                <rect key="frame" x="219" y="711" width="45" height="45"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.1029521771" green="0.2466912725" blue="0.50969478629999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                <inset key="imageEdgeInsets" minX="5" minY="5" maxX="5" maxY="5"/>
-                                <state key="normal" image="2000px-Bluetooth.svg">
-                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
-                                </state>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="23"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="clipsToBounds" value="YES"/>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <segue destination="ClQ-aC-3tq" kind="show" id="2d7-BA-SRY"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="FdC-i5-yLs" firstAttribute="leading" secondItem="ReM-pc-A50" secondAttribute="leading" id="5fF-FI-PWL"/>
+                            <constraint firstItem="AX9-c7-pnn" firstAttribute="bottom" secondItem="ReM-pc-A50" secondAttribute="bottom" id="9Hw-TE-eW5"/>
+                            <constraint firstItem="AX9-c7-pnn" firstAttribute="leading" secondItem="ReM-pc-A50" secondAttribute="leading" id="EK2-on-xMm"/>
+                            <constraint firstItem="AX9-c7-pnn" firstAttribute="trailing" secondItem="ReM-pc-A50" secondAttribute="trailing" id="aWE-Bw-2Qx"/>
+                            <constraint firstItem="FdC-i5-yLs" firstAttribute="trailing" secondItem="ReM-pc-A50" secondAttribute="trailing" id="gn6-53-ABZ"/>
+                            <constraint firstItem="FdC-i5-yLs" firstAttribute="top" secondItem="ReM-pc-A50" secondAttribute="top" id="uEY-vl-3zt"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="ReM-pc-A50"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Map" id="R3Q-v4-7nM"/>
+                    <navigationItem key="navigationItem" id="R3Q-v4-7nM">
+                        <leftBarButtonItems>
+                            <barButtonItem style="plain" id="uLb-ua-A3s">
+                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Fca-rm-Bqk">
+                                    <rect key="frame" x="16" y="0.0" width="50" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <state key="normal" image="arIcon"/>
+                                    <connections>
+                                        <action selector="press_arBtn:" destination="bGM-9M-eeq" eventType="touchUpInside" id="mBO-iw-QAM"/>
+                                    </connections>
+                                </button>
+                            </barButtonItem>
+                            <barButtonItem style="plain" id="B0f-Ka-grV">
+                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ERn-z8-4Y1">
+                                    <rect key="frame" x="74" y="0.0" width="50" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <state key="normal" image="mapIcon"/>
+                                    <connections>
+                                        <action selector="press_mapBtn:" destination="bGM-9M-eeq" eventType="touchUpInside" id="Jjx-Vh-FtI"/>
+                                    </connections>
+                                </button>
+                            </barButtonItem>
+                            <barButtonItem style="plain" id="MGy-fM-7h4">
+                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Vbz-Ii-GcP">
+                                    <rect key="frame" x="132" y="0.0" width="55" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <state key="normal" title="Normal"/>
+                                    <connections>
+                                        <action selector="press_normalBtn:" destination="bGM-9M-eeq" eventType="touchUpInside" id="rrP-0H-EOM"/>
+                                    </connections>
+                                </button>
+                            </barButtonItem>
+                        </leftBarButtonItems>
+                        <rightBarButtonItems>
+                            <barButtonItem style="plain" id="vxn-Nv-GHz">
+                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="15l-RI-pPB">
+                                    <rect key="frame" x="311" y="0.66666666666666785" width="48" height="43"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <state key="normal" image="question-mark"/>
+                                    <connections>
+                                        <segue destination="fp2-Bj-msk" kind="show" id="f3z-F1-J5w"/>
+                                    </connections>
+                                </button>
+                            </barButtonItem>
+                            <barButtonItem style="plain" id="byR-eY-iyN">
+                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" id="3g8-Ts-6pk">
+                                    <rect key="frame" x="255" y="0.0" width="48" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" red="0.1029521771" green="0.2466912725" blue="0.50969478629999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                    <inset key="imageEdgeInsets" minX="5" minY="5" maxX="5" maxY="5"/>
+                                    <state key="normal" image="2000px-Bluetooth.svg">
+                                        <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    </state>
+                                    <connections>
+                                        <segue destination="ClQ-aC-3tq" kind="show" id="2d7-BA-SRY"/>
+                                    </connections>
+                                </button>
+                            </barButtonItem>
+                            <barButtonItem style="plain" id="MS3-ZN-iNU">
+                                <button key="customView" opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" id="RbI-SG-zxc">
+                                    <rect key="frame" x="200" y="0.0" width="47" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="18"/>
+                                    <inset key="imageEdgeInsets" minX="13" minY="13" maxX="13" maxY="13"/>
+                                    <state key="normal" image="flashlight-icon-7"/>
+                                    <connections>
+                                        <action selector="press_ledBtn:" destination="bGM-9M-eeq" eventType="touchUpInside" id="dwM-Fc-fYJ"/>
+                                    </connections>
+                                </button>
+                            </barButtonItem>
+                        </rightBarButtonItems>
+                    </navigationItem>
                     <connections>
+                        <outlet property="arBtn" destination="Fca-rm-Bqk" id="LOF-38-drs"/>
                         <outlet property="ledBtn" destination="RbI-SG-zxc" id="BiS-Jw-zaU"/>
+                        <outlet property="mapBtn" destination="ERn-z8-4Y1" id="X5T-Vo-h9f"/>
                         <outlet property="myMapView" destination="AX9-c7-pnn" id="xf0-e4-tSX"/>
+                        <outlet property="myMapView_H" destination="mQO-zq-WBy" id="9lw-2F-YjR"/>
+                        <outlet property="normalBtn" destination="Vbz-Ii-GcP" id="kZ2-Oz-sT5"/>
                         <outlet property="sceneView" destination="FdC-i5-yLs" id="fPu-J5-Hzq"/>
+                        <outlet property="sceneView_H" destination="jQE-DP-Dta" id="bmP-ZE-fBu"/>
                         <outlet property="statusTextView" destination="dUZ-nz-hZj" id="BxS-s3-FpL"/>
                     </connections>
                 </viewController>
@@ -152,7 +205,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="k9q-an-i0N" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-719" y="25"/>
+            <point key="canvasLocation" x="-692" y="-285"/>
         </scene>
         <!--ListVC-->
         <scene sceneID="vAP-Io-AFW">
@@ -228,7 +281,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VFs-Hs-1mt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="87" y="26"/>
+            <point key="canvasLocation" x="90" y="-285"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="NR0-Ne-ufk">
@@ -246,9 +299,39 @@
             </objects>
             <point key="canvasLocation" x="-2439" y="26"/>
         </scene>
+        <!--Tutorial Page-->
+        <scene sceneID="VX5-LI-TVs">
+            <objects>
+                <viewController id="fp2-Bj-msk" customClass="TutorialPage" customModule="FindMyBike" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="wJm-af-HzI">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="........" textAlignment="center" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F1p-ty-4F1">
+                                <rect key="frame" x="35.333333333333329" y="254" width="300" height="0.0"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="QkJ-Kp-MOa" firstAttribute="trailing" secondItem="F1p-ty-4F1" secondAttribute="trailing" constant="10" id="4ga-pf-Eja"/>
+                            <constraint firstItem="F1p-ty-4F1" firstAttribute="leading" secondItem="QkJ-Kp-MOa" secondAttribute="leading" constant="10" id="Dmw-9m-Elb"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="QkJ-Kp-MOa"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="T4d-5g-7Q3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-692" y="385"/>
+        </scene>
     </scenes>
     <resources>
-        <image name="2000px-Bluetooth.svg" width="2000" height="3051"/>
-        <image name="flashlight-icon-7" width="238" height="240"/>
+        <image name="2000px-Bluetooth.svg" width="28" height="43"/>
+        <image name="arIcon" width="43" height="43"/>
+        <image name="flashlight-icon-7" width="43" height="43"/>
+        <image name="mapIcon" width="41" height="44"/>
+        <image name="question-mark" width="43" height="43"/>
     </resources>
 </document>

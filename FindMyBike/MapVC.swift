@@ -20,6 +20,8 @@ var DataMgr = DataManager()
 class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARSCNViewDelegate, ARSessionDelegate{
     /** MAP VARIABLE **/
     @IBOutlet var myMapView: MKMapView!
+    @IBOutlet var myMapView_H: NSLayoutConstraint!
+    
     var headingImageView: UIImageView?
     @IBOutlet var ledBtn: UIButton!
     
@@ -33,6 +35,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     /** AR VARIABLE **/
     @IBOutlet weak var statusTextView: UITextView!
     @IBOutlet var sceneView: ARSCNView!
+    @IBOutlet var sceneView_H: NSLayoutConstraint!
     
     var steps: [MKRoute.Step] = []
     var anchors: [ARAnchor] = []
@@ -49,6 +52,10 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         }
     }
     var status: String!
+    
+    @IBOutlet var arBtn: UIButton!
+    @IBOutlet var mapBtn: UIButton!
+    @IBOutlet var normalBtn: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,6 +81,15 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         sceneView.showsStatistics = true
         let scene = SCNScene()
         sceneView.scene = scene
+        
+        print("UIScreen.main.bounds.size.height = \(UIScreen.main.bounds.size.height)")
+        screenH = UIScreen.main.bounds.size.height - 44
+        if isFetch {
+            screenH = screenH - 44 - 43
+        }
+        print("UIScreen.main.bounds.size.height = \(String(describing: screenH))")
+        myMapView_H.constant = screenH/2
+        sceneView_H.constant = screenH/2
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -164,6 +180,32 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
                 alertVC.addAction(action)
                 self.present(alertVC, animated: true, completion: nil)
             }
+        }
+    }
+    
+    @IBAction func press_arBtn(_ sender: Any) {
+        changeLayout(h1: screenH, h2: 0)
+    }
+    
+    @IBAction func press_mapBtn(_ sender: Any) {
+        changeLayout(h1: 0, h2: screenH)
+        
+        // Pause the view's session
+        sceneView.session.pause()
+    }
+    
+    @IBAction func press_normalBtn(_ sender: Any) {
+        changeLayout(h1: screenH/2, h2: screenH/2)
+        
+        sceneView.session.run(sceneView.session.configuration!)
+    }
+    
+    func changeLayout(h1:CGFloat, h2:CGFloat) {
+        sceneView_H.constant = h1
+        myMapView_H.constant = h2
+        UIView.animate(withDuration: 0.5, animations: {
+            self.view.layoutIfNeeded()
+        }) { (result) in
         }
     }
     
