@@ -24,6 +24,12 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
     var ledOn:Bool = true
     var ledOff:Bool = false
 
+    var prevX:Double?
+    var prevY:Double?
+    var prevZ:Double?
+    var prevDiff:Double?
+    var threshold:Double! = 15.0
+    
     private static var mInstance:BLEManager?
     static func shared() -> BLEManager {
         if mInstance == nil {
@@ -38,6 +44,11 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
         
         beanManager = PTDBeanManager()
         beanManager!.delegate = self
+        
+        prevX = -1000.0
+        prevY = -1000.0
+        prevZ = -1000.0
+        prevDiff = -1000.0
     }
     
     // Bean SDK: We check to see if Bluetooth is on.
@@ -110,8 +121,8 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
         else{
             NSLog("---BLEManager--- Connected to Bean: \(String(describing: bean.name))")
             isConnected = true
+            bean.delegate = self
             myBean = bean
-            myBean?.readAccelerationAxes()
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "BLEConnectSuccess"), object: nil)
         }
     }
@@ -131,7 +142,31 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
     
     
     func bean(_ bean: PTDBean!, serialDataReceived data: Data!) {
-        NSLog("---BLEManager--- Get string from Bean: \(data.base64EncodedString())")
+        let message = String(data: data, encoding: String.Encoding.utf8)
+        var result = message!.split{$0 == " "}.map(String.init)
+        NSLog("---BLEManager--- Get string from Bean: \(String(describing: message))")
+        let nowX = Double(result[0])
+        let nowY = Double(result[1])
+        let nowZ = Double(result[2])
+        if prevX != -1000.0 {
+            let diffX = abs(nowX! - prevX!)
+            let diffY = abs(nowY! - prevY!)
+            let diffZ = abs(nowZ! - prevZ!)
+            let diff = diffX + diffY + diffZ
+            //NSLog("---BLEManager--- diff acceleration = \(diff)")
+            if prevDiff! != -1000.0 && prevDiff! > diff && (prevDiff! - diff) > threshold{
+                NSLog("---BLEManager--- prevDiff = \(prevDiff!), diff = \(diff), met threshold criteria, set bike location")
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "UpdateBikeLocation"), object: nil)
+            }
+            prevDiff = diff
+        }
+        else{
+            NSLog("---BLEManager--- it's first time")
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "UpdateBikeLocation"), object: nil)
+        }
+        prevX = nowX
+        prevY = nowY
+        prevZ = nowZ
     }
     
     func beanDidUpdateRSSI(_ bean: PTDBean!, error: Error!) {
@@ -139,7 +174,10 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
     }
     
     func bean(_ bean: PTDBean!, didUpdateAccelerationAxes acceleration: PTDAcceleration) {
-        NSLog("---BLEManager--- acceleration updated : \(acceleration.x), \(acceleration.y), \(acceleration.z)")
+        let x = acceleration.x + 255.0
+        let y = acceleration.y + 255.0
+        let z = (acceleration.z + 255.0)/2
+        NSLog("---BLEManager--- acceleration updated : \(acceleration.x), \(acceleration.y), \(acceleration.z), process data = \(x), \(y), \(z)")
         if acceleration.x == 0 && acceleration.y == 0 && acceleration.z == 0 {
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "UpdateBikeLocation"), object: nil)
         }

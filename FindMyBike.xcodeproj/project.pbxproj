@@ -236,6 +236,15 @@
 				LastSwiftUpdateCheck = 1010;
 				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = V.Lab;
+				TargetAttributes = {
+					8B711A7921B338D000782C76 = {
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
+					};
+				};
 			};
 			buildConfigurationList = CA9D5CE221AD792E00F65E5D /* Build configuration list for PBXProject "FindMyBike" */;
 			compatibilityVersion = "Xcode 9.3";

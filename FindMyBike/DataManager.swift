@@ -34,7 +34,6 @@ class DataManager{
             //testing
             //setBikelocation(userlocation!.coordinate.latitude + 0.001, userlocation!.coordinate.longitude + 0.0006)
         }
-            
         else{
             //first use
             NSLog("---DataManager--- first use bike location")

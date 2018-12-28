@@ -52,6 +52,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         }
     }
     var status: String!
+    var configuration: ARWorldTrackingConfiguration!
     
     @IBOutlet var arBtn: UIButton!
     @IBOutlet var mapBtn: UIButton!
@@ -97,16 +98,21 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         super.viewWillAppear(animated)
         
         // Create a session configuration
-        let configuration = ARWorldTrackingConfiguration()
-        configuration.worldAlignment = .gravityAndHeading
-        
-        // Run the view's session
-        sceneView.session.run(configuration)
+        if configuration == nil{
+            configuration = ARWorldTrackingConfiguration()
+            configuration.worldAlignment = .gravityAndHeading
+            
+            // Run the view's session
+            sceneView.session.run(configuration)
+        }
+        else{
+            sceneView.session.run(configuration)
+        }
     }
     
     /** callback function when MapVC is re-appear */
     override func viewDidAppear(_ animated: Bool) {
-        //NSLog("---MapVC--- viewDidAppear")
+        NSLog("---MapVC--- viewDidAppear")
         super.viewDidAppear(animated)
         
         addNotificationObserver()
@@ -197,7 +203,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     @IBAction func press_normalBtn(_ sender: Any) {
         changeLayout(h1: screenH/2, h2: screenH/2)
         
-        sceneView.session.run(sceneView.session.configuration!)
+        sceneView.session.run(configuration)
     }
     
     func changeLayout(h1:CGFloat, h2:CGFloat) {
@@ -216,17 +222,17 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         
         if !initial {
             bikelocation = DataMgr.getBikelocation()
-            
+
             bikeAnnotation.coordinate = CLLocation(latitude: bikelocation!.coordinate.latitude, longitude: bikelocation!.coordinate.longitude).coordinate
             bikeAnnotation.title = "Bike location"
             bikeAnnotation.subtitle = "updated time: "
             myMapView.addAnnotation(bikeAnnotation)
-            
+            setMapCamera()
             initial = true
         }
         
-        routing()
-        setMapCamera()
+        //routing()
+        //setMapCamera()
         
         /*** AR FUNCTION ***/
         updateLocation(Float(bikelocation!.coordinate.latitude),Float(bikelocation!.coordinate.longitude))
@@ -241,8 +247,8 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         let rotation = CGFloat(Double.pi * (heading/180))
         headingImageView?.transform = CGAffineTransform(rotationAngle: rotation)
         
-        myMapView.camera.heading = heading
-        myMapView.setCamera(myMapView.camera, animated: true)
+        //myMapView.camera.heading = heading
+        //myMapView.setCamera(myMapView.camera, animated: true)
     }
     
     func setMapCamera(){
@@ -286,11 +292,30 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-        let renderer = MKPolylineRenderer(overlay: overlay)
-        renderer.strokeColor = UIColor.red
-        renderer.lineWidth = 4.0
+//        let renderer = MKPolylineRenderer(overlay: overlay)
+//        renderer.strokeColor = UIColor.red
+//        renderer.lineWidth = 4.0
+//
+//        return renderer
         
-        return renderer
+        let render = MKOverlayRenderer()
+        // 折线
+        if overlay.isKind(of: MKPolyline.self) {
+            let polylineRender = MKPolylineRenderer(overlay: overlay)// 折线
+            polylineRender.lineWidth = 2 // 线宽
+            polylineRender.strokeColor = UIColor.red // 颜色
+            return polylineRender
+        }
+        
+        // 圆形
+        if overlay.isKind(of: MKCircle.self) {
+            let circleRender = MKCircleRenderer(overlay: overlay)
+            circleRender.fillColor = UIColor.cyan
+            circleRender.alpha = 0.5
+            return circleRender
+        }
+        
+        return render
     }
     
     /** ADD BLUEW ARROW **/
@@ -422,7 +447,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         checkGPSPermission()
         BLEManager.shared().startScan()
         
-        sceneView.session.run(sceneView.session.configuration!)
+        sceneView.session.run(configuration)
     }
     
     @objc func AppGoToBackground(){
@@ -471,6 +496,17 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     @objc func UpdateBikeLocation(){
         NSLog("---MapVC--- update bike location")
         DataMgr.setBikelocation((userlocation?.coordinate.latitude)!, (userlocation?.coordinate.longitude)!)
+        
+        if bikeAnnotation != nil{
+            myMapView.removeAnnotation(bikeAnnotation)
+            
+            bikelocation = DataMgr.getBikelocation()
+            bikeAnnotation.coordinate = CLLocation(latitude: bikelocation!.coordinate.latitude, longitude: bikelocation!.coordinate.longitude).coordinate
+            bikeAnnotation.title = "Bike location"
+            bikeAnnotation.subtitle = "updated time: "
+            
+            myMapView.addAnnotation(bikeAnnotation)
+        }
     }
     
     /****** AR FUNCTION ******/

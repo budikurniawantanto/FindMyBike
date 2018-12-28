@@ -144,6 +144,11 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
             object: nil)
         NotificationCenter.default.addObserver(
             self,
+            selector: #selector(UpdateBikeLocation),
+            name: NSNotification.Name(rawValue: "UpdateBikeLocation"),
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self,
             selector: #selector(AppGoToForeground),
             name: UIApplication.willEnterForegroundNotification,
             object: nil)
@@ -204,6 +209,11 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         //load data to list
         BLEList = BLEManager.shared().beanList
         bleList.reloadData()
+    }
+    
+    @objc func UpdateBikeLocation(){
+        NSLog("---BLEListVC--- update bike location")
+        DataMgr.setBikelocation((userlocation?.coordinate.latitude)!, (userlocation?.coordinate.longitude)!)
     }
     
     @objc func AppGoToForeground(){
