@@ -13,6 +13,7 @@ struct NavigationService{
     
     func getDirections(destinationLocation: CLLocationCoordinate2D, request: MKDirections.Request, completion: @escaping ([MKRoute.Step]) -> Void) {
         var steps: [MKRoute.Step] = []
+        var routes: [MKRoute] = []
         
         let placeMark = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: destinationLocation.latitude, longitude: destinationLocation.longitude))
         //print("---NavigationService--- placeMark = \(placeMark)")
@@ -29,12 +30,13 @@ struct NavigationService{
                 print("Error getting directions")
             } else {
                 guard let response = response else { return }
+                routes = response.routes
                 for route in response.routes {
-                    print("---NavigationService--- route distance = \(route.expectedTravelTime)")
+                    //print("---NavigationService--- route distance = \(route.expectedTravelTime)")
                     steps.append(contentsOf: route.steps)
                 }
                 completion(steps)
-                print("---NavigationService--- steps done")
+                //print("---NavigationService--- steps done")
             }
         }
     }

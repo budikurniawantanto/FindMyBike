@@ -50,7 +50,7 @@ class BaseNode: SCNNode {
         let annotationNode = SCNNode()
         annotationNode.addChildNode(_textNode)
         annotationNode.position = sphereNode.position
-        print("---BaseNode--- annotation position = \(annotationNode.position)")
+        //print("---BaseNode--- annotation position = \(annotationNode.position)")
         addChildNode(sphereNode)
         addChildNode(annotationNode)
     }

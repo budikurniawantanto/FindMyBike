@@ -191,6 +191,8 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     
     @IBAction func press_arBtn(_ sender: Any) {
         changeLayout(h1: screenH, h2: 0)
+        
+        sceneView.session.run(configuration)
     }
     
     @IBAction func press_mapBtn(_ sender: Any) {
@@ -231,7 +233,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
             initial = true
         }
         
-        //routing()
+        routing()
         //setMapCamera()
         
         /*** AR FUNCTION ***/
@@ -243,11 +245,11 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         
         //NSLog("---MapVC--- inside didUpdateHeading, frame = \(String(describing: headingImageView?.frame))")
         let heading = newHeading.trueHeading > 0 ? newHeading.trueHeading: newHeading.magneticHeading
-        headingImageView?.isHidden = false
-        let rotation = CGFloat(Double.pi * (heading/180))
-        headingImageView?.transform = CGAffineTransform(rotationAngle: rotation)
+//        headingImageView?.isHidden = false
+//        let rotation = CGFloat(Double.pi * (heading/180))
+//        headingImageView?.transform = CGAffineTransform(rotationAngle: rotation)
         
-        //myMapView.camera.heading = heading
+        myMapView.camera.heading = heading
         //myMapView.setCamera(myMapView.camera, animated: true)
     }
     
@@ -265,30 +267,44 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     }
 
     func routing(){
-        NSLog("---MapVC--- routing start")
-        let directionRequest = MKDirections.Request()
-        directionRequest.source = MKMapItem(placemark: MKPlacemark(coordinate: userlocation!.coordinate, addressDictionary: nil))
-        directionRequest.destination = MKMapItem(placemark: MKPlacemark(coordinate: bikelocation!.coordinate, addressDictionary: nil))
-        directionRequest.transportType = .automobile
+        let navService = NavigationService()
+        let request = MKDirections.Request()
+        self.destinationLocation = CLLocationCoordinate2D(latitude: (bikelocation?.coordinate.latitude)!, longitude: (bikelocation?.coordinate.longitude)!)
         
-        // Calculate the direction
-        let directions = MKDirections(request: directionRequest)
-        
-        directions.calculate {
-            (response, error) -> Void in
-            
-            guard let response = response else {
-                if let error = error {
-                    print("Error: \(error)")
+        NSLog("---ARVC--- getting steps")
+        if destinationLocation != nil {
+            navService.getDirections(destinationLocation: destinationLocation, request: request)
+            {
+                routes in
+                for route in routes {
+                    self.myMapView.addOverlay((route.polyline), level: MKOverlayLevel.aboveRoads)
                 }
-                
-                return
             }
-            
-            let route = response.routes[0]
-            NSLog("---MapVC--- route distance = \(route.distance)")
-            self.myMapView.addOverlay((route.polyline), level: MKOverlayLevel.aboveRoads)
         }
+//        NSLog("---MapVC--- routing start")
+//        let directionRequest = MKDirections.Request()
+//        directionRequest.source = MKMapItem(placemark: MKPlacemark(coordinate: userlocation!.coordinate, addressDictionary: nil))
+//        directionRequest.destination = MKMapItem(placemark: MKPlacemark(coordinate: bikelocation!.coordinate, addressDictionary: nil))
+//        directionRequest.transportType = .automobile
+//
+//        // Calculate the direction
+//        let directions = MKDirections(request: directionRequest)
+//
+//        directions.calculate {
+//            (response, error) -> Void in
+//
+//            guard let response = response else {
+//                if let error = error {
+//                    print("Error: \(error)")
+//                }
+//
+//                return
+//            }
+//
+//            let route = response.routes[0]
+//            NSLog("---MapVC--- route distance = \(route.distance)")
+//            self.myMapView.addOverlay((route.polyline), level: MKOverlayLevel.aboveRoads)
+//        }
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
@@ -322,7 +338,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
         if views.last?.annotation is MKUserLocation{
             //NSLog("---MapVC--- inside didAdd views,  addHeadingView start")
-            addHeadingView(toAnnotationView: views.last!)
+            //addHeadingView(toAnnotationView: views.last!)
         }
     }
     
