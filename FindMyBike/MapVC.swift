@@ -57,6 +57,9 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     @IBOutlet var arBtn: UIButton!
     @IBOutlet var mapBtn: UIButton!
     @IBOutlet var normalBtn: UIButton!
+    var tmpBtn: UIButton!
+    var defaultColor: UIColor!
+    var prevOverlay: [MKOverlay] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,14 +86,17 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         let scene = SCNScene()
         sceneView.scene = scene
         
-        print("UIScreen.main.bounds.size.height = \(UIScreen.main.bounds.size.height)")
+        //NSLog("UIScreen.main.bounds.size.height = \(UIScreen.main.bounds.size.height)")
         screenH = UIScreen.main.bounds.size.height - 44
         if isFetch {
             screenH = screenH - 44 - 43
         }
-        print("UIScreen.main.bounds.size.height = \(String(describing: screenH))")
+        //NSLog("UIScreen.main.bounds.size.height = \(String(describing: screenH))")
         myMapView_H.constant = screenH/2
         sceneView_H.constant = screenH/2
+        
+        defaultColor = mapBtn.backgroundColor;
+        normalBtn.backgroundColor = UIColor.lightGray
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -112,7 +118,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     
     /** callback function when MapVC is re-appear */
     override func viewDidAppear(_ animated: Bool) {
-        NSLog("---MapVC--- viewDidAppear")
+        //NSLog("---MapVC--- viewDidAppear")
         super.viewDidAppear(animated)
         
         addNotificationObserver()
@@ -192,11 +198,19 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     @IBAction func press_arBtn(_ sender: Any) {
         changeLayout(h1: screenH, h2: 0)
         
+        normalBtn.backgroundColor = defaultColor
+        mapBtn.backgroundColor = defaultColor
+        arBtn.backgroundColor = UIColor.lightGray
+        
         sceneView.session.run(configuration)
     }
     
     @IBAction func press_mapBtn(_ sender: Any) {
         changeLayout(h1: 0, h2: screenH)
+        
+        normalBtn.backgroundColor = defaultColor
+        mapBtn.backgroundColor = UIColor.lightGray
+        arBtn.backgroundColor = defaultColor
         
         // Pause the view's session
         sceneView.session.pause()
@@ -204,6 +218,10 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     
     @IBAction func press_normalBtn(_ sender: Any) {
         changeLayout(h1: screenH/2, h2: screenH/2)
+        
+        normalBtn.backgroundColor = UIColor.lightGray
+        mapBtn.backgroundColor = defaultColor
+        arBtn.backgroundColor = defaultColor
         
         sceneView.session.run(configuration)
     }
@@ -234,7 +252,6 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         }
         
         routing()
-        //setMapCamera()
         
         /*** AR FUNCTION ***/
         updateLocation(Float(bikelocation!.coordinate.latitude),Float(bikelocation!.coordinate.longitude))
@@ -267,6 +284,11 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     }
 
     func routing(){
+        if !prevOverlay.isEmpty {
+            myMapView.removeOverlays(prevOverlay)
+            prevOverlay.removeAll()
+        }
+        
         let navService = NavigationService()
         let request = MKDirections.Request()
         self.destinationLocation = CLLocationCoordinate2D(latitude: (bikelocation?.coordinate.latitude)!, longitude: (bikelocation?.coordinate.longitude)!)
@@ -277,43 +299,14 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
             {
                 routes in
                 for route in routes {
+                    self.prevOverlay.append(route.polyline)
                     self.myMapView.addOverlay((route.polyline), level: MKOverlayLevel.aboveRoads)
                 }
             }
         }
-//        NSLog("---MapVC--- routing start")
-//        let directionRequest = MKDirections.Request()
-//        directionRequest.source = MKMapItem(placemark: MKPlacemark(coordinate: userlocation!.coordinate, addressDictionary: nil))
-//        directionRequest.destination = MKMapItem(placemark: MKPlacemark(coordinate: bikelocation!.coordinate, addressDictionary: nil))
-//        directionRequest.transportType = .automobile
-//
-//        // Calculate the direction
-//        let directions = MKDirections(request: directionRequest)
-//
-//        directions.calculate {
-//            (response, error) -> Void in
-//
-//            guard let response = response else {
-//                if let error = error {
-//                    print("Error: \(error)")
-//                }
-//
-//                return
-//            }
-//
-//            let route = response.routes[0]
-//            NSLog("---MapVC--- route distance = \(route.distance)")
-//            self.myMapView.addOverlay((route.polyline), level: MKOverlayLevel.aboveRoads)
-//        }
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-//        let renderer = MKPolylineRenderer(overlay: overlay)
-//        renderer.strokeColor = UIColor.red
-//        renderer.lineWidth = 4.0
-//
-//        return renderer
-        
         let render = MKOverlayRenderer()
         // 折线
         if overlay.isKind(of: MKPolyline.self) {
