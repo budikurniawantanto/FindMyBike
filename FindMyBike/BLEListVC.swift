@@ -214,6 +214,7 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @objc func UpdateBikeLocation(){
         NSLog("---BLEListVC--- update bike location")
         DataMgr.setBikelocation((userlocation?.coordinate.latitude)!, (userlocation?.coordinate.longitude)!)
+        needUpdateBikeLocation = true
     }
     
     @objc func AppGoToForeground(){

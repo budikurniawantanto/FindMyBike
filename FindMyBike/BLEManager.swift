@@ -28,7 +28,7 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
     var prevY:Double?
     var prevZ:Double?
     var prevDiff:Double?
-    var threshold:Double! = 15.0
+    var threshold:Double! = 30.0
     
     private static var mInstance:BLEManager?
     static func shared() -> BLEManager {

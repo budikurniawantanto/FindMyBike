@@ -27,4 +27,5 @@ let BLEtransferCharacteristicUUID = CBUUID(string: BLE_TRANSFER_CHARACTERISTIC_U
 
 var isFetch = (UIScreen.main.bounds.size.height == 812) || (UIScreen.main.bounds.size.height == 896)
 var screenH: CGFloat! = 0
+var needUpdateBikeLocation: Bool! = false
 

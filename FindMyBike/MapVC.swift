@@ -133,6 +133,10 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         }
         
         checkGPSPermission()
+        
+        if needUpdateBikeLocation {
+            UpdateBikeLocation()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -241,6 +245,9 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         //NSLog("---MapVC--- didUpdateLocations called, userLocation = (\(userlocation!.coordinate.latitude), \(userlocation!.coordinate.longitude))")
         
         if !initial {
+            //testing
+            let loc = CLLocation(latitude: 25.014881, longitude: 121.534158)
+            DataMgr.setBikelocation(Double((loc.coordinate.latitude)), Double((loc.coordinate.longitude)))
             bikelocation = DataMgr.getBikelocation()
 
             bikeAnnotation.coordinate = CLLocation(latitude: bikelocation!.coordinate.latitude, longitude: bikelocation!.coordinate.longitude).coordinate
@@ -251,10 +258,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
             initial = true
         }
         
-        routing()
-        
-        /*** AR FUNCTION ***/
-        updateLocation(Float(bikelocation!.coordinate.latitude),Float(bikelocation!.coordinate.longitude))
+        routing(index: 0)
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
@@ -283,8 +287,9 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         myMapView.setCamera(myMapView.camera, animated: true)
     }
 
-    func routing(){
+    func routing(index: Int){
         if !prevOverlay.isEmpty {
+            NSLog("---MapVC--- previous overlay is not empty, delete overlay")
             myMapView.removeOverlays(prevOverlay)
             prevOverlay.removeAll()
         }
@@ -303,6 +308,17 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
                     self.myMapView.addOverlay((route.polyline), level: MKOverlayLevel.aboveRoads)
                 }
             }
+        }
+        
+        /*** AR FUNCTION
+            if index == 0, then only user location updated, so no need to remove all anchor and node
+            otherwise, bike location is change, so we need to remove all anchor and node, re-calculate distance and step route
+         ***/
+        if index == 0 {
+            updateARUserLocation(Float(bikelocation!.coordinate.latitude),Float(bikelocation!.coordinate.longitude))
+        }
+        else{
+            updateARBikeLocation(Float(bikelocation!.coordinate.latitude),Float(bikelocation!.coordinate.longitude))
         }
     }
     
@@ -341,6 +357,190 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         headingImageView!.frame = CGRect(x: (annotationView.frame.size.width - blueArrow!.size.width)/2, y: (annotationView.frame.size.height - blueArrow!.size.height)/2, width: blueArrow!.size.width, height: blueArrow!.size.height)
         annotationView.insertSubview(headingImageView!, at: 0)
         headingImageView!.isHidden = true
+    }
+    
+    /****** AR FUNCTION ******/
+    func updateARUserLocation(_ latitude : Float, _ longitude : Float) {
+        let location = CLLocation(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude))
+        let locationTransform = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: userlocation!, location: location)
+        let position = SCNVector3.positionFromTransform(locationTransform)
+        self.distance = Float(location.distance(from: userlocation!))
+        NSLog("---ARVC--- user location = \(userlocation!.coordinate)")
+        NSLog("---ARVC--- bike location = \(bikelocation!.coordinate)")
+        
+        if self.modelNode == nil {
+            let modelScene = SCNScene(named: "art.scnassets/Car.scn")!
+            self.modelNode = modelScene.rootNode.childNode(withName: rootNodeName, recursively: true)!
+            // Move model's pivot to its center in the Y axis
+            let (minBox, maxBox) = self.modelNode.boundingBox
+            self.modelNode.pivot = SCNMatrix4MakeTranslation(0, (maxBox.y - minBox.y)/2, 0)
+            
+            // Save original transform to calculate future rotations
+            self.originalTransform = self.modelNode.transform
+            
+            // Position the model in the correct place
+            //positionModel(location)
+            let scale = max( min( Float(1000/distance), 1.5 ), 3 )
+            modelNode.position = position
+            modelNode.scale = SCNVector3(x: scale, y: scale, z: scale)
+            
+            // Add the model to the scene
+            sceneView.scene.rootNode.addChildNode(self.modelNode)
+            
+            //add navigation service
+            let navService = NavigationService()
+            let request = MKDirections.Request()
+            self.destinationLocation = CLLocationCoordinate2D(latitude: (bikelocation?.coordinate.latitude)!, longitude: (bikelocation?.coordinate.longitude)!)
+            
+            NSLog("---ARVC--- getting steps")
+            if destinationLocation != nil {
+                navService.getDirections(destinationLocation: destinationLocation, request: request)
+                {
+                    steps in
+                    for step in steps {
+                        self.steps.append(step)
+                        //NSLog("---ARVC--- step instruction = \(step.instructions), distance = \(step.distance), location = (\(step.getLocation().coordinate.latitude), \(step.getLocation().coordinate.longitude))")
+                        self.addSphere(for: step)
+                    }
+                }
+            }
+        } else {
+            // Begin animation
+            SCNTransaction.begin()
+            SCNTransaction.animationDuration = 1.0
+            
+            // Position the model in the correct place
+            let scale = max( min( Float(1000/distance), 1.5 ), 3 )
+            modelNode.position = position
+            modelNode.scale = SCNVector3(x: scale, y: scale, z: scale)
+            
+            //re-place nodes
+            for baseNode in nodes {
+                let translation = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: userlocation!, location: baseNode.location)
+                let position = SCNVector3.positionFromTransform(translation)
+                let distance = baseNode.location.distance(from: userlocation!)
+                DispatchQueue.main.async {
+                    let scale = 100 / Float(distance)
+                    baseNode.scale = SCNVector3(x: scale, y: scale, z: scale)
+                    baseNode.anchor = ARAnchor(transform: translation)
+                    baseNode.position = position
+                }
+            }
+            
+            // End animation
+            SCNTransaction.commit()
+        }
+    }
+    
+    func updateARBikeLocation(_ latitude : Float, _ longitude : Float) {
+        // Begin animation
+        SCNTransaction.begin()
+        SCNTransaction.animationDuration = 1.0
+        
+        let location = CLLocation(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude))
+        let locationTransform = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: userlocation!, location: location)
+        let position = SCNVector3.positionFromTransform(locationTransform)
+        self.distance = Float(location.distance(from: userlocation!))
+        
+        let scale = max( min( Float(1000/distance), 1.5 ), 3 )
+        modelNode.position = position
+        modelNode.scale = SCNVector3(x: scale, y: scale, z: scale)
+        
+        //reset anchor and node
+        for anchor in anchors{
+            sceneView.session.remove(anchor: anchor)
+        }
+        
+        for node in nodes{
+            node.removeFromParentNode()
+        }
+        anchors.removeAll()
+        nodes.removeAll()
+        
+        //add navigation service
+        let navService = NavigationService()
+        let request = MKDirections.Request()
+        self.destinationLocation = CLLocationCoordinate2D(latitude: (bikelocation?.coordinate.latitude)!, longitude: (bikelocation?.coordinate.longitude)!)
+        
+        NSLog("---ARVC--- getting steps")
+        if destinationLocation != nil {
+            navService.getDirections(destinationLocation: destinationLocation, request: request)
+            {
+                steps in
+                for step in steps {
+                    self.steps.append(step)
+                    //NSLog("---ARVC--- step instruction = \(step.instructions), distance = \(step.distance), location = (\(step.getLocation().coordinate.latitude), \(step.getLocation().coordinate.longitude))")
+                    self.addSphere(for: step)
+                }
+            }
+        }
+        
+        // End animation
+        SCNTransaction.commit()
+    }
+    
+    // For navigation route step add sphere node
+    func addSphere(for step: MKRoute.Step) {
+        let stepLocation = step.getLocation()
+        NSLog("---ARVC--- stepLocation = \(stepLocation.coordinate), stepInstruction = \(step.instructions)")
+        let locationTransform = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: userlocation!, location: stepLocation)
+        let position = SCNVector3.positionFromTransform(locationTransform)
+        let stepAnchor = ARAnchor(transform: locationTransform)
+        
+        anchors.append(stepAnchor)
+        
+        let sphere = BaseNode(title: step.instructions, location: stepLocation)
+        if step.instructions.isEmpty {
+            //NSLog("---ARVC--- step instruction is empty")
+            //sphere.addNode(with: 0.5, and: .blue, and: "Start")
+        }
+        else{
+            sphere.addNode(with: 0.5, and: .blue, and: step.instructions)
+        }
+        sphere.location = stepLocation
+        let distance = sphere.location.distance(from: userlocation!)
+        let scale = 20 / Float(distance)
+        sphere.scale = SCNVector3(x: scale, y: scale, z: scale)
+        sphere.position = position
+        sphere.anchor = stepAnchor
+        
+        sceneView.session.add(anchor: stepAnchor)
+        sceneView.scene.rootNode.addChildNode(sphere)
+        
+        //        NSLog("---ARVC--- starting location = \(userlocation!.coordinate)")
+        //        NSLog("---ARVC--- destination = \(sphere.location.coordinate)")
+        //        NSLog("---ARVC--- distance = \(distance)")
+        //        NSLog("---ARVC--- sphere position = \(sphere.position)")
+        nodes.append(sphere)
+    }
+    
+    // For intermediary locations - CLLocation - add sphere
+    private func addSphere(for location: CLLocation) {
+        let locationTransform = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: startingLocation, location: location)
+        let position = SCNVector3.positionFromTransform(locationTransform)
+        let stepAnchor = ARAnchor(transform: locationTransform)
+        anchors.append(stepAnchor)
+        
+        let sphere = BaseNode(title: "Title", location: location)
+        sphere.addSphere(with: 0.5, and: .blue)
+        sphere.location = location
+        let distance = sphere.location.distance(from: startingLocation)
+        let scale = 10 / Float(distance)
+        sphere.scale = SCNVector3(x: scale, y: scale, z: scale)
+        sphere.position = position
+        sphere.anchor = stepAnchor
+        sceneView.scene.rootNode.addChildNode(sphere)
+        sceneView.session.add(anchor: stepAnchor)
+        nodes.append(sphere)
+        
+        NSLog("---ARVC--- starting location = \(startingLocation.coordinate)")
+        NSLog("---ARVC--- destination = \(sphere.location.coordinate)")
+        NSLog("---ARVC--- distance = \(distance)")
+        NSLog("---ARVC--- sphere position = \(sphere.position)")
+    }
+    
+    func setStatusText() {
+        statusTextView.text = "Distance: \(String(format: "%.2f m", distance))"
     }
     
     /** GPS Permission */
@@ -504,156 +704,21 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     
     @objc func UpdateBikeLocation(){
         NSLog("---MapVC--- update bike location")
-        DataMgr.setBikelocation((userlocation?.coordinate.latitude)!, (userlocation?.coordinate.longitude)!)
-        
-        if bikeAnnotation != nil{
-            myMapView.removeAnnotation(bikeAnnotation)
-            
-            bikelocation = DataMgr.getBikelocation()
-            bikeAnnotation.coordinate = CLLocation(latitude: bikelocation!.coordinate.latitude, longitude: bikelocation!.coordinate.longitude).coordinate
-            bikeAnnotation.title = "Bike location"
-            bikeAnnotation.subtitle = "updated time: "
-            
-            myMapView.addAnnotation(bikeAnnotation)
-        }
-    }
-    
-    /****** AR FUNCTION ******/
-    func updateLocation(_ latitude : Float, _ longitude : Float) {
-        let location = CLLocation(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude))
-        let locationTransform = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: userlocation!, location: location)
-        let position = SCNVector3.positionFromTransform(locationTransform)
-        self.distance = Float(location.distance(from: userlocation!))
-        NSLog("---ARVC--- user location = \(userlocation!.coordinate)")
-        NSLog("---ARVC--- bike location = \(bikelocation!.coordinate)")
-        
-        if self.modelNode == nil {
-            let modelScene = SCNScene(named: "art.scnassets/Car.scn")!
-            self.modelNode = modelScene.rootNode.childNode(withName: rootNodeName, recursively: true)!
-            // Move model's pivot to its center in the Y axis
-            let (minBox, maxBox) = self.modelNode.boundingBox
-            self.modelNode.pivot = SCNMatrix4MakeTranslation(0, (maxBox.y - minBox.y)/2, 0)
-            
-            // Save original transform to calculate future rotations
-            self.originalTransform = self.modelNode.transform
-            
-            // Position the model in the correct place
-            //positionModel(location)
-            let scale = max( min( Float(1000/distance), 1.5 ), 3 )
-            modelNode.position = position
-            modelNode.scale = SCNVector3(x: scale, y: scale, z: scale)
-            
-            // Add the model to the scene
-            sceneView.scene.rootNode.addChildNode(self.modelNode)
-            
-            //add navigation service
-            let navService = NavigationService()
-            let request = MKDirections.Request()
-            self.destinationLocation = CLLocationCoordinate2D(latitude: (bikelocation?.coordinate.latitude)!, longitude: (bikelocation?.coordinate.longitude)!)
-            
-            NSLog("---ARVC--- getting steps")
-            if destinationLocation != nil {
-                navService.getDirections(destinationLocation: destinationLocation, request: request)
-                {
-                    steps in
-                    for step in steps {
-                        self.steps.append(step)
-                        //NSLog("---ARVC--- step instruction = \(step.instructions), distance = \(step.distance), location = (\(step.getLocation().coordinate.latitude), \(step.getLocation().coordinate.longitude))")
-                        self.addSphere(for: step)
-                    }
-                }
-            }
-        } else {
-            // Begin animation
-            SCNTransaction.begin()
-            SCNTransaction.animationDuration = 1.0
-            
-            // Position the model in the correct place
-            //positionModel(location)
-            let scale = max( min( Float(1000/distance), 1.5 ), 3 )
-            modelNode.position = position
-            modelNode.scale = SCNVector3(x: scale, y: scale, z: scale)
-            
-            //re-place nodes
-            for baseNode in nodes {
-                let translation = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: userlocation!, location: baseNode.location)
-                let position = SCNVector3.positionFromTransform(translation)
-                let distance = baseNode.location.distance(from: userlocation!)
-                DispatchQueue.main.async {
-                    let scale = 100 / Float(distance)
-                    baseNode.scale = SCNVector3(x: scale, y: scale, z: scale)
-                    baseNode.anchor = ARAnchor(transform: translation)
-                    baseNode.position = position
-                }
-            }
-            
-            // End animation
-            SCNTransaction.commit()
-        }
-    }
-    // For navigation route step add sphere node
-    
-    func addSphere(for step: MKRoute.Step) {
-        let stepLocation = step.getLocation()
-        NSLog("---ARVC--- stepLocation = \(stepLocation.coordinate), stepInstruction = \(step.instructions)")
-        let locationTransform = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: userlocation!, location: stepLocation)
-        let position = SCNVector3.positionFromTransform(locationTransform)
-        let stepAnchor = ARAnchor(transform: locationTransform)
-        
-        anchors.append(stepAnchor)
-        
-        let sphere = BaseNode(title: step.instructions, location: stepLocation)
-        if step.instructions.isEmpty {
-            //NSLog("---ARVC--- step instruction is empty")
-            //sphere.addNode(with: 0.5, and: .blue, and: "Start")
+        if !needUpdateBikeLocation {
+            DataMgr.setBikelocation(Double((userlocation?.coordinate.latitude)!), Double((userlocation?.coordinate.longitude)!))
         }
         else{
-            sphere.addNode(with: 0.5, and: .blue, and: step.instructions)
+            needUpdateBikeLocation = false
         }
-        sphere.location = stepLocation
-        let distance = sphere.location.distance(from: userlocation!)
-        let scale = 20 / Float(distance)
-        sphere.scale = SCNVector3(x: scale, y: scale, z: scale)
-        sphere.position = position
-        sphere.anchor = stepAnchor
         
-        sceneView.session.add(anchor: stepAnchor)
-        sceneView.scene.rootNode.addChildNode(sphere)
-        
-        //        NSLog("---ARVC--- starting location = \(userlocation!.coordinate)")
-        //        NSLog("---ARVC--- destination = \(sphere.location.coordinate)")
-        //        NSLog("---ARVC--- distance = \(distance)")
-        //        NSLog("---ARVC--- sphere position = \(sphere.position)")
-        nodes.append(sphere)
-    }
+        myMapView.removeAnnotation(bikeAnnotation)
+        bikelocation = DataMgr.getBikelocation()
+        bikeAnnotation.coordinate = CLLocation(latitude: bikelocation!.coordinate.latitude, longitude: bikelocation!.coordinate.longitude).coordinate
+        bikeAnnotation.title = "Bike location"
+        bikeAnnotation.subtitle = "updated time: "
+        myMapView.addAnnotation(bikeAnnotation)
     
-    // For intermediary locations - CLLocation - add sphere
-    private func addSphere(for location: CLLocation) {
-        let locationTransform = MatrixHelper.transformMatrix(for: matrix_identity_float4x4, originLocation: startingLocation, location: location)
-        let position = SCNVector3.positionFromTransform(locationTransform)
-        let stepAnchor = ARAnchor(transform: locationTransform)
-        anchors.append(stepAnchor)
-        
-        let sphere = BaseNode(title: "Title", location: location)
-        sphere.addSphere(with: 0.5, and: .blue)
-        sphere.location = location
-        let distance = sphere.location.distance(from: startingLocation)
-        let scale = 10 / Float(distance)
-        sphere.scale = SCNVector3(x: scale, y: scale, z: scale)
-        sphere.position = position
-        sphere.anchor = stepAnchor
-        sceneView.scene.rootNode.addChildNode(sphere)
-        sceneView.session.add(anchor: stepAnchor)
-        nodes.append(sphere)
-        
-        NSLog("---ARVC--- starting location = \(startingLocation.coordinate)")
-        NSLog("---ARVC--- destination = \(sphere.location.coordinate)")
-        NSLog("---ARVC--- distance = \(distance)")
-        NSLog("---ARVC--- sphere position = \(sphere.position)")
-    }
-    
-    func setStatusText() {
-        statusTextView.text = "Distance: \(String(format: "%.2f m", distance))"
+        routing(index: 1)
     }
     
     func session(_ session: ARSession, didFailWithError error: Error) {
