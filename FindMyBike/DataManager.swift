@@ -34,7 +34,8 @@ class DataManager{
         else{
             //first use
             NSLog("---DataManager--- first use bike location")
-            bikelocation = CLLocation(latitude: 25.014881, longitude: 121.534158)
+            
+            bikelocation = CLLocation(latitude: 25.021786, longitude: 121.541186)
             setBikelocation( Double((bikelocation?.coordinate.latitude)!), Double((bikelocation?.coordinate.longitude)!))
             return bikelocation!
         }

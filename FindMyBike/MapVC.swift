@@ -100,8 +100,27 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        //NSLog("---MapVC--- viewWillAppear")
+        NSLog("---MapVC--- viewWillAppear")
         super.viewWillAppear(animated)
+        
+        addNotificationObserver()
+    }
+    
+    /** callback function when MapVC is re-appear */
+    override func viewDidAppear(_ animated: Bool) {
+        NSLog("---MapVC--- viewDidAppear")
+        super.viewDidAppear(animated)
+        
+        //setup BLE connection
+        if BLEManager.shared().isConnected == false {
+            ledBtn.backgroundColor = UIColor.white
+            BLEManager.shared().startScan()
+        }
+        else{
+            GetRSSI()
+        }
+        
+        checkGPSPermission()
         
         // Create a session configuration
         if configuration == nil{
@@ -114,25 +133,6 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         else{
             sceneView.session.run(configuration)
         }
-    }
-    
-    /** callback function when MapVC is re-appear */
-    override func viewDidAppear(_ animated: Bool) {
-        //NSLog("---MapVC--- viewDidAppear")
-        super.viewDidAppear(animated)
-        
-        addNotificationObserver()
-        
-        //setup BLE connection
-        if BLEManager.shared().isConnected == false {
-            ledBtn.backgroundColor = UIColor.white
-            BLEManager.shared().startScan()
-        }
-        else{
-            GetRSSI()
-        }
-        
-        checkGPSPermission()
         
         if needUpdateBikeLocation {
             UpdateBikeLocation()
@@ -242,11 +242,11 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // 印出目前所在位置座標
         userlocation = locations.last
-        //NSLog("---MapVC--- didUpdateLocations called, userLocation = (\(userlocation!.coordinate.latitude), \(userlocation!.coordinate.longitude))")
+        NSLog("---MapVC--- didUpdateLocations called, userLocation = (\(userlocation!.coordinate.latitude), \(userlocation!.coordinate.longitude))")
         
         if !initial {
             //testing
-            let loc = CLLocation(latitude: 25.014881, longitude: 121.534158)
+            let loc = CLLocation(latitude: 25.021786, longitude: 121.541186)
             DataMgr.setBikelocation(Double((loc.coordinate.latitude)), Double((loc.coordinate.longitude)))
             bikelocation = DataMgr.getBikelocation()
 
@@ -641,7 +641,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, ARS
         RSSI = BLEManager.shared().myBean?.rssi
         NSLog("---MapVC--- getRSSI = \(RSSI!), int value = \(RSSI!.intValue)")
         
-        if  RSSI!.intValue > -15 || RSSI!.intValue < -60 {
+        if  RSSI!.intValue > -15 || RSSI!.intValue < -90 {
             NSLog("---MapVC--- Device is not at correct range, RSSI = \(RSSI!)")
             ledBtn.backgroundColor = UIColor.white
         }

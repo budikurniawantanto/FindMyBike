@@ -15,10 +15,15 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet var bleStatusText: UIView!
     @IBOutlet weak var connectBtn: UIButton!
     @IBOutlet weak var bleList: UITableView!
+    @IBOutlet var disconnectBtn: UIButton!
     
+    var defaultColor: UIColor?
     var vc: UIViewController?
-    var BLEList: Array<PTDBean> = []
+    var discoverBLEList: Array<PTDBean> = []
+    var existingBLEList: Array<PTDBean> = []
     var selectedCell: UITableViewCell?
+    var lastdiscoverIndex:Int?
+    var indicatorBtn:UIActivityIndicatorView?
     
     /** called when first time create BLEListVC layout
      * Set callback for:
@@ -33,6 +38,15 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         bleList.delegate = self
         bleList.dataSource = self
         selectedCell = nil
+        
+        indicatorBtn = UIActivityIndicatorView(style: .whiteLarge)
+        indicatorBtn?.frame = CGRect(x: 0.0, y: 0.0, width: 70.0, height: 70.0)
+        indicatorBtn?.backgroundColor = UIColor.black
+        indicatorBtn?.layer.cornerRadius = 35.0
+        indicatorBtn?.layer.masksToBounds = true
+        indicatorBtn?.center = self.view.center
+        self.view.addSubview(indicatorBtn!)
+        indicatorBtn?.bringSubviewToFront(self.view)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -48,11 +62,15 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         addNotificationObserver()
         
         //load data to list
-        BLEList = BLEManager.shared().beanList
+        discoverBLEList = BLEManager.shared().discoverBeanList
+        existingBLEList = BLEManager.shared().existingBeanList
+        lastdiscoverIndex = -1
         bleList.reloadData()
         
         //start scan
         BLEManager.shared().startScan()
+        defaultColor = connectBtn.backgroundColor
+        checkConnection()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -69,46 +87,142 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     /** connect to selected peripheral when user press Connect button*/
     @IBAction func press_connectBtn(_ sender: Any) {
+        indicatorBtn?.startAnimating()
         if selectedCell != nil {
-            for bean in BLEList {
+            for bean in discoverBLEList {
                 if (BLEManager.shared().isConnected == true && BLEManager.shared().myBean != bean) || bean.name == selectedCell?.textLabel!.text {
                     NSLog("---BLEListVC--- found selected bean = \(bean)")
                     BLEManager.shared().connectToBean(bean: bean)
                 }
             }
         }
-        else{
-            let alertVC = UIAlertController(
-                title: "No Bluetooth Device Selected",
-                message: "Please select bluetooth device that you want to connect!!!",
-                preferredStyle: UIAlertController.Style.alert)
-            let action = UIAlertAction(
-                title: "OK",
-                style: UIAlertAction.Style.default,
-                handler: { (action: UIAlertAction) -> Void in
-                    self.dismiss(animated: true, completion: nil)
+        else {
+            if BLEManager.shared().isConnected{
+                let alertVC = UIAlertController(
+                    title: "Bluetooth Connection",
+                    message: "You already connect to bluetooth " + (BLEManager.shared().myBean?.name)!,
+                    preferredStyle: UIAlertController.Style.alert)
+                let action = UIAlertAction(
+                    title: "OK",
+                    style: UIAlertAction.Style.default,
+                    handler: { (action: UIAlertAction) -> Void in
+                        self.dismiss(animated: true, completion: nil)
                 })
-            alertVC.addAction(action)
-            self.present(alertVC, animated: true, completion: nil)
+                alertVC.addAction(action)
+                self.present(alertVC, animated: true, completion: nil)
+            }
+            else{
+                let alertVC = UIAlertController(
+                    title: "No Bluetooth Device Selected",
+                    message: "Please select bluetooth device that you want to connect!!!",
+                    preferredStyle: UIAlertController.Style.alert)
+                let action = UIAlertAction(
+                    title: "OK",
+                    style: UIAlertAction.Style.default,
+                    handler: { (action: UIAlertAction) -> Void in
+                        self.dismiss(animated: true, completion: nil)
+                })
+                alertVC.addAction(action)
+                self.present(alertVC, animated: true, completion: nil)
+            }
+            indicatorBtn?.stopAnimating()
+        }
+    }
+    
+    @IBAction func press_disconnectBtn(_ sender: Any) {
+        indicatorBtn?.startAnimating()
+        BLEManager.shared().disconnectFromBean(bean: BLEManager.shared().myBean!)
+    }
+    
+    /** function to check current connected device */
+    func checkConnection(){
+        // Do any additional setup after loading the view.
+        if !BLEManager.shared().isConnected {
+            disconnectBtn.isEnabled = false
+            disconnectBtn.backgroundColor = UIColor.lightGray
+        }
+        else{
+            disconnectBtn.isEnabled = true
+            disconnectBtn.backgroundColor = defaultColor
         }
     }
     
     /** Get total available BLE device list */
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        NSLog("---BLEListVC--- total list = \(BLEList.count)")
-        return BLEList.count
+        let total = discoverBLEList.count + existingBLEList.count
+        NSLog("---BLEListVC--- total list = \(total)")
+        return total
     }
     
     /** update BLE device list on tableView */
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:UITableViewCell = bleList.dequeueReusableCell(withIdentifier: "cell")! as UITableViewCell
-        let bean = BLEList[indexPath.row]
-        NSLog("---BLEListVC--- bean = \(bean)")
-        if bean != BLEManager.shared().myBean {
+        
+        if indexPath.row < existingBLEList.count {
+            let bean = existingBLEList[indexPath.row]
+            NSLog("---BLEListVC--- existing bean = \(bean), index row = \(indexPath.row)")
             cell.textLabel?.text = bean.name
+            
+            if bean != BLEManager.shared().myBean {
+                //if had already connected, but this BLE not in discoverBLEList, then this BLE is not available
+                if !discoverBLEList.contains(bean) {
+                    cell.detailTextLabel?.text = "Unavailable"
+                    cell.selectionStyle = UITableViewCell.SelectionStyle.none;
+                }
+                else{
+                    cell.detailTextLabel?.text = "Available"
+                    cell.selectionStyle = UITableViewCell.SelectionStyle.default
+                }
+            }
+            else{
+                cell.detailTextLabel?.text = "Connected"
+                cell.selectionStyle = UITableViewCell.SelectionStyle.none;
+            }
         }
         else{
-            cell.textLabel?.text = nil
+            let start = existingBLEList.count
+            var index:Int! = indexPath.row - start
+            if lastdiscoverIndex != -1 {
+                index = lastdiscoverIndex! + 1
+            }
+            var bean:PTDBean! = discoverBLEList[index]
+            var found:Bool! = false
+            
+            //find first bean that not exist in existingBLEList to avoid the same ble show in list
+            while true {
+                if existingBLEList.contains(bean) {
+                    index = index + 1
+                    if index == discoverBLEList.count {
+                        break
+                    }
+                    else {
+                        bean = discoverBLEList[index]
+                    }
+                }
+                else{
+                    found = true
+                    lastdiscoverIndex = index
+                    break
+                }
+            }
+            
+            if found {
+                NSLog("---BLEListVC--- discover bean = \(String(describing: bean)), index row = \(indexPath.row)")
+                cell.textLabel?.text = bean.name
+                if bean != BLEManager.shared().myBean {
+                    cell.detailTextLabel?.text = "Available"
+                    cell.selectionStyle = UITableViewCell.SelectionStyle.default
+                }
+                else{
+                    cell.detailTextLabel?.text = "Connected"
+                    cell.selectionStyle = UITableViewCell.SelectionStyle.none;
+                }
+            }
+            else{
+                cell.textLabel?.text = nil
+                cell.detailTextLabel?.text = nil
+                cell.selectionStyle = UITableViewCell.SelectionStyle.none;
+            }
         }
         
         return cell
@@ -116,8 +230,13 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     /** called when user click on specific row on tableView */
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedCell = (bleList.cellForRow(at: indexPath) as! UITableViewCell)
-        NSLog("---BLEListVC--- selected cell = \(String(describing: selectedCell!.textLabel!.text))")
+        if bleList.cellForRow(at: indexPath)?.detailTextLabel!.text == "Available" {
+            selectedCell = (bleList.cellForRow(at: indexPath) as! UITableViewCell)
+            NSLog("---BLEListVC--- selected cell = \(String(describing: selectedCell!.textLabel!.text)), background color = \(String(describing: selectedCell?.backgroundColor))")
+        }
+        else{
+            selectedCell = nil
+        }
     }
     
     /** add notification observer */
@@ -162,29 +281,39 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     /** callback function when BLEManager success get new bluetooth devices */
     @objc func loadBLEList(){
         NSLog("---BLEListVC--- reload BLE list")
-        BLEList = BLEManager.shared().beanList
+        discoverBLEList = BLEManager.shared().discoverBeanList
+        existingBLEList = BLEManager.shared().existingBeanList
+        lastdiscoverIndex = -1
         bleList.reloadData()
     }
     
     /** callback function when BLEManager success connect to selected devices */
     @objc func ConnectionSuccess(){
         NSLog("---BLEListVC--- connection success")
+        indicatorBtn?.stopAnimating()
         let alertVC = UIAlertController(
             title: "Connection Result",
             message: "Connected!!!",
             preferredStyle: UIAlertController.Style.alert)
+        
         let action = UIAlertAction(
             title: "OK",
             style: UIAlertAction.Style.default,
             handler: { (action: UIAlertAction) -> Void in
-                self.dismiss(animated: true, completion: nil)
+                self.navigationController?.popViewController(animated: true)
+                //let mapVC = self.storyboard?.instantiateViewController(withIdentifier: "MapVC")
+                //self.present(mapVC!, animated: true, completion: nil)
         })
         alertVC.addAction(action)
         self.present(alertVC, animated: true, completion: nil)
         
         //load data to list
-        BLEList = BLEManager.shared().beanList
-        bleList.reloadData()
+//        discoverBLEList = BLEManager.shared().discoverBeanList
+//        existingBLEList = BLEManager.shared().existingBeanList
+//        lastdiscoverIndex = -1
+//        bleList.reloadData()
+//        checkConnection()
+//        selectedCell = nil
     }
     
     /** callback function when BLEManager failed connect to selected devices */
@@ -205,23 +334,33 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
     
     @objc func BLEDisconnected(){
-        NSLog("---BLEStatusVC--- BLE disconnect")
+        NSLog("---BLEListVC--- BLE disconnect")
+        indicatorBtn?.stopAnimating()
         //load data to list
-        BLEList = BLEManager.shared().beanList
+        discoverBLEList = BLEManager.shared().discoverBeanList
+        existingBLEList = BLEManager.shared().existingBeanList
+        lastdiscoverIndex = -1
         bleList.reloadData()
+        
+        disconnectBtn.isEnabled = false
+        disconnectBtn.backgroundColor = UIColor.lightGray
+        
+        selectedCell = nil
     }
     
     @objc func UpdateBikeLocation(){
         NSLog("---BLEListVC--- update bike location")
         DataMgr.setBikelocation((userlocation?.coordinate.latitude)!, (userlocation?.coordinate.longitude)!)
-        needUpdateBikeLocation = true
+        //needUpdateBikeLocation = true
     }
     
     @objc func AppGoToForeground(){
-        NSLog("---MapVC--- App go to foreground")
+        NSLog("---BLEListVC--- App go to foreground")
         
         //load data to list
-        BLEList = BLEManager.shared().beanList
+        discoverBLEList = BLEManager.shared().discoverBeanList
+        existingBLEList = BLEManager.shared().existingBeanList
+        lastdiscoverIndex = -1
         bleList.reloadData()
         
         //start scan
@@ -229,7 +368,7 @@ class BLEListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
     
     @objc func AppGoToBackground(){
-        NSLog("---MapVC--- App go to background")
+        NSLog("---BLEListVC--- App go to background")
         BLEManager.shared().stopScan()
     }
 }

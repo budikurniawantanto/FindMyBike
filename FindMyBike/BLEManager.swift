@@ -15,7 +15,8 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
     
     var beanManager: PTDBeanManager?
     var myBean: PTDBean?
-    var beanList: Array<PTDBean> = []
+    var discoverBeanList: Array<PTDBean> = []
+    var existingBeanList: Array<PTDBean> = []
     
     // And somewhere to store the incoming data
     fileprivate let data = NSMutableData()
@@ -93,8 +94,8 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
         }
         
         NSLog("---BLEManager--- Discover a Bean: \(String(describing: bean.name))")
-        if !beanList.contains(bean) {
-            beanList.append(bean)
+        if !discoverBeanList.contains(bean) {
+            discoverBeanList.append(bean)
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "LoadBLEList"), object: nil)
         }
     }
@@ -124,6 +125,10 @@ class BLEManager: NSObject, PTDBeanManagerDelegate, PTDBeanDelegate {
             bean.delegate = self
             myBean = bean
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "BLEConnectSuccess"), object: nil)
+            
+            if !existingBeanList.contains(bean) {
+                existingBeanList.append(bean)
+            }
         }
     }
     

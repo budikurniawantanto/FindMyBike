@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class TutorialPage: UIViewController {
+class TutorialPageVC: UIViewController {
     
     var image: UIImage!
     var imageView: UIImageView!
